@@ -11,13 +11,13 @@
 | Edição de um item do conteúdo principal | EditRelatoView.vue | Sim (usuário pode editar o próprio relato) |
 | "Meus itens" (conteúdo publicado pelo próprio usuário) | MyRelatosView.vue | Sim |
 | Perfil próprio / perfil público | profile/MyProfileView.vue, profile/PublicProfileView.vue | Sim (tem seguir outros usuários) |
-| Listas/favoritos personalizados | favorites/MyFavoritesView.vue, itinerary/MyItinerariesView.vue | Sim (favoritar dicas e criar roteiros) |
+| Listas/favoritos personalizados | MyFavoritesView.vue, MyItinerariesView.vue | Sim (favoritar dicas e criar roteiros) |
 | Busca | SearchView.vue | Sim (busca por destinos) |
 | Notificações | - | Não descrito no projeto, não vou fazer |
 | Dashboard administrativo | admin/AdminDashboardView.vue | Sempre |
 | Denúncias / moderação | admin/AdminReportsView.vue | Sim (moderação de conteúdos e usuários) |
 | Gerenciamento de usuários (admin) | admin/AdminUsersView.vue | Sempre |
-| Gerenciamento do conteúdo principal (admin) | admin/AdminRelatosView.vue, admin/AdminDestinosView.vue, admin/AdminCategoriasView.vue | Sim (cadastro de destinos e categorias) |
+| Gerenciamento do conteúdo principal (admin) | admin/AdminDestinosView.vue, admin/AdminCategoriasView.vue | Sim (cadastro de destinos e categorias) |
 | Rota não encontrada | NotFoundView.vue | Sempre |
 
 ## Observações
