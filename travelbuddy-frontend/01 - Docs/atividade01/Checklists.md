@@ -61,3 +61,65 @@
 ### Etapa 5
 - [x] Landing Page exibindo "Status da API: online" com dados reais da API
 - [x] Erro de CORS reproduzido intencionalmente e depois corrigido, com prints/anotações do que apareceu no Console e no Network do DevTools, e também do que apareceu (ou não) no terminal da API
+
+---
+
+# Ficha de preparação
+
+| Dado | Valor |
+|---|---|
+| Nome do projeto | TravelBuddy |
+| Entidade principal | Destino (destination) |
+| Porta da API | 3000 |
+| Porta do front | 5173 |
+| Nome do campo de busca da entidade principal (plural, camelCase) | destinations |
+
+---
+
+# Checklists - Atividade 2
+
+## Parte A - Backend
+
+### Etapa 1
+- [x] Pasta modules/search/ criada
+- [x] searchService.js criado, com o nome da sua entidade no plural (destinations)
+
+### Etapa 2
+- [x] searchController.js criado, usando exports.search = ...
+- [x] O objeto retornado usa o nome da sua entidade no plural, igual ao definido no service
+
+### Etapa 3
+- [x] searchRoutes.js criado, com router.get('/search', searchController.search)
+
+### Etapa 4
+- [x] searchRoutes importado no topo de app.js
+- [x] app.use('/api', searchRoutes) adicionado
+- [x] API reiniciou sem erros
+
+### Etapa 5
+- [x] curl .../api/search?q=teste responde no formato esperado, com o nome certo do campo
+- [x] curl .../api/search (sem q) responde com query: ""
+- [x] curl .../api continua respondendo normalmente
+
+## Parte B - Frontend
+
+### Etapa 1
+- [x] src/services/api.js criado com axios.create(...) usando VITE_API_URL
+
+### Etapa 2
+- [x] Interceptor de resposta adicionado a api.js
+- [x] Comentário no topo do arquivo, com minhas palavras, explicando os quatro cenários
+
+### Etapa 3
+- [x] authService.js criado com register, login, logout (ainda sem uso)
+- [x] searchService.js criado, usando params: { q: query }
+- [x] systemService.js criado
+
+### Etapa 4
+- [x] LandingView.vue usando getApiStatus() em vez de fetch
+- [x] Página ainda mostra "Status da API: online"
+
+### Etapa 5
+- [x] Console mostrou Busca OK: com o objeto esperado, usando o nome certo da entidade (destinations)
+- [x] Erro de rede provocado de propósito caiu na mensagem amigável do interceptor, não num erro técnico
+- [x] Bloco de teste removido da Landing Page ao final

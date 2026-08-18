@@ -1,6 +1,7 @@
 var express = require('express');
 var logger = require('morgan');
 var cors = require('cors');
+var searchRoutes = require('./modules/search/searchRoutes');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
@@ -16,6 +17,7 @@ app.use(cors({
 }));
 
 app.use('/api', indexRouter);
+app.use('/api', searchRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

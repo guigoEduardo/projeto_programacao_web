@@ -22,6 +22,7 @@
 
 ## Observações
 
-- Entidade principal do projeto: relato de viagem (substitui o "vídeo" do Shortz-App).
-- Destino e categoria são entidades auxiliares, usadas para organizar os relatos.
+- Entidade principal do projeto: destino (substitui o "vídeo" do Shortz-App).
+- Relato de viagem e categoria são entidades auxiliares, associadas a um destino.
 - Curtir/descurtir relatos e fotos, avaliação e comentários vão ficar dentro da tela de detalhe do relato (RelatoDetailView.vue), não precisam de tela própria.
+- Nome do campo de busca da entidade principal (plural, camelCase): **destinations**.
