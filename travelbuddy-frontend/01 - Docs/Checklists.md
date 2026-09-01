@@ -73,6 +73,8 @@
 | Porta da API | 3000 |
 | Porta do front | 5173 |
 | Nome do campo de busca da entidade principal (plural, camelCase) | destinations |
+| Nome do banco de dados MySQL do seu projeto | travelbuddy_db |
+| Nome do campo de contagem de itens publicados (plural, camelCase) | reportsCount |
 
 ---
 
@@ -123,3 +125,65 @@
 - [x] Console mostrou Busca OK: com o objeto esperado, usando o nome certo da entidade (destinations)
 - [x] Erro de rede provocado de propósito caiu na mensagem amigável do interceptor, não num erro técnico
 - [x] Bloco de teste removido da Landing Page ao final
+
+---
+
+# Checklists - Atividade 3
+
+## Parte A - Backend
+
+### Etapa 1
+- [x] sequelize, mysql2, bcryptjs, express-validator instalados
+
+### Etapa 2
+- [x] Banco de dados criado no MySQL, com o nome anotado na ficha
+- [x] .env atualizado com DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+- [x] config/database.js criado
+
+### Etapa 3
+- [x] config/constants.js criado
+
+### Etapa 4
+- [x] userModel.js criado, com o campo de contagem renomeado corretamente (reportsCount)
+- [x] userValidator.js criado
+- [x] userService.js criado, com getPublicProfile também usando o campo de contagem renomeado
+- [x] Nunca a senha (nem o hash) é devolvida em nenhuma resposta
+- [x] middlewares/asyncHandler.js criado
+- [x] middlewares/errorHandler.js criado
+- [x] userController.js e userRoutes.js criados
+
+### Etapa 5
+- [x] userRoutes e errorHandler importados e registrados em app.js, na ordem certa
+- [x] Terminal exibe "Banco de dados sincronizado!" ao subir a API
+- [x] No MySQL, a tabela users do seu banco existe, com todas as colunas do Model
+
+### Etapa 6
+- [x] Cadastro com sucesso responde 201 com { id, username, email }
+- [x] Senha curta responde 400 com a mensagem correta
+- [x] Cadastro duplicado responde 500 (não é bug, é esperado)
+- [x] GET /profile/:username confirma os dados persistidos
+
+## Parte B - Frontend
+
+### Etapa 1
+- [x] Contrato da API conferido (regras de validação e formato de resposta)
+
+### Etapa 2
+- [x] Existe um link clicável para /register em algum lugar acessível a um visitante deslogado
+
+### Etapa 3
+- [x] Formulário controlado com v-model amarrando cada campo a form
+- [x] errors e apiErrorMessage preparados no <script setup>
+
+### Etapa 4
+- [x] validate() replica exatamente os mesmos limites configurados no userValidator.js do back-end
+- [x] Mensagens de erro aparecem/desaparecem corretamente conforme o usuário corrige os campos
+
+### Etapa 5
+- [x] Envio vazio não dispara nenhuma chamada de rede
+- [x] Cadastro válido navega para /login
+- [x] Cadastro duplicado exibe apiErrorMessage com a mensagem vinda de verdade da API
+
+### Etapa 6
+- [x] Os cinco comportamentos testados e conferidos (formulário vazio, senha curta, cadastro válido, duplicidade, curl de confirmação)
+- [x] curl confirma que o cadastro feito pela tela está persistido no banco
