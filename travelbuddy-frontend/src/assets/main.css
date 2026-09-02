@@ -1,0 +1,25 @@
+:root {
+  --brand-color: #2E8B57;
+}
+
+.btn-primary {
+  background-color: var(--brand-color);
+  border-color: var(--brand-color);
+}
+
+.btn-primary:hover {
+  background-color: #256e46;
+  border-color: #256e46;
+}
+
+.navbar {
+  background-color: var(--brand-color) !important;
+}
+
+.text-brand {
+  color: var(--brand-color) !important;
+}
+
+a {
+  color: var(--brand-color);
+}

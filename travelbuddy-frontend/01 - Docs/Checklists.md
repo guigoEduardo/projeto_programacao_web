@@ -75,6 +75,7 @@
 | Nome do campo de busca da entidade principal (plural, camelCase) | destinations |
 | Nome do banco de dados MySQL do seu projeto | travelbuddy_db |
 | Nome do campo de contagem de itens publicados (plural, camelCase) | reportsCount |
+| Cor de marca do projeto (hex) | #2E8B57 |
 
 ---
 
@@ -187,3 +188,52 @@
 ### Etapa 6
 - [x] Os cinco comportamentos testados e conferidos (formulário vazio, senha curta, cadastro válido, duplicidade, curl de confirmação)
 - [x] curl confirma que o cadastro feito pela tela está persistido no banco
+
+---
+
+# Checklists - Atividade 4
+
+## Parte A - Backend
+
+### Etapa 1
+- [x] jsonwebtoken instalado
+- [x] .env atualizado com JWT_SECRET e JWT_EXPIRES_IN
+- [x] config/jwt.js criado e programado com as funções de carregamento e segurança do .env, geração e verificação de tokens
+- [x] middlewares/auth.js criado e programado
+- [x] userService.js atualizado com loginUser e getUserProfile
+- [x] userValidator.js atualizado com loginValidator
+- [x] userController.js atualizado com login, logout, getMyProfile
+- [x] userRoutes.js atualizado, com /profile/me antes de /profile/:username
+
+### Etapa 2 - Testes
+- [x] Login com sucesso devolve token e user (incluindo isAdmin)
+- [x] Senha errada devolve 500 com mensagem genérica
+- [x] GET /profile/me sem token devolve 401
+- [x] GET /profile/me com token válido devolve os dados do usuário
+- [x] GET /profile/me com token inválido devolve 401
+
+## Parte B - Frontend
+
+### Etapa 1
+- [x] createPinia() registrado em main.js, antes de .use(router)
+- [x] stores/auth.js criado, com persistência via localStorage
+- [x] Interceptor de requisição anexando Authorization quando existe token
+- [x] Interceptor de resposta limpando a sessão e redirecionando em qualquer 401
+- [x] Os nomes de chave usados batem exatamente com os usados na store
+- [x] Bootstrap 5 (CSS) incluído via CDN
+- [x] assets/main.css criado, com a cor de marca do projeto
+
+### Etapa 2
+- [x] Tela de Login funcional, chamando authStore.login(...)
+- [x] Destino padrão pós-login ajustado ao nome real da rota principal (feed)
+- [x] Guarda de rota bloqueando acesso direto a rotas com requiresAuth: true
+- [x] useAuthStore() chamado dentro do callback, não no topo do arquivo
+- [x] Navbar mostra links diferentes conforme o estado de login
+- [x] Logout limpa a sessão e redireciona ao Login
+
+### Etapa 3 - Testes
+- [x] Login funcional → redireciona à tela principal do projeto
+- [x] F5 na página logado → sessão persiste
+- [x] Logout → rota protegida redireciona ao Login, com ?redirect=...
+- [x] Login a partir da tela redirecionada volta para a rota original
+- [x] Editar o token manualmente e recarregar → redireciona ao Login automaticamente (interceptor de 401)

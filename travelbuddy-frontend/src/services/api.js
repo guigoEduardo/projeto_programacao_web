@@ -17,26 +17,38 @@ const api = axios.create({
   },
 })
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response) {
-      // A API respondeu, mas com um status de erro (4xx ou 5xx)
       const apiError = error.response.data
+
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      }
+
       return Promise.reject({
         message: apiError.message || 'Ocorreu um erro na requisição.',
         errors: apiError.errors || [],
         status: error.response.status,
       })
     } else if (error.request) {
-      // A requisição foi enviada, mas nenhuma resposta chegou (API fora do ar, sem rede)
       return Promise.reject({
         message: 'Não foi possível se conectar ao servidor. Verifique sua conexão ou tente novamente.',
         errors: [],
         status: null,
       })
     } else {
-      // Erro ao montar a própria requisição (configuração inválida, por exemplo)
       return Promise.reject({
         message: 'Erro inesperado ao preparar a requisição.',
         errors: [],
