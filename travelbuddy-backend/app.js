@@ -1,4 +1,5 @@
 var express = require('express');
+var path = require('path');
 var logger = require('morgan');
 var cors = require('cors');
 var searchRoutes = require('./modules/search/searchRoutes');
@@ -17,6 +18,8 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true
 }));
+
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 app.use('/api', indexRouter);
 app.use('/api', searchRoutes);

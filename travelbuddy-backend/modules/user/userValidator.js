@@ -48,3 +48,15 @@ exports.loginValidator = [
     .withMessage('A senha é obrigatória.'),
   validate
 ];
+
+exports.profileUpdateValidator = [
+  body('fullName')
+    .notEmpty().withMessage('O nome completo não pode ficar vazio.')
+    .trim(),
+  body('bio')
+    .optional({ checkFalsy: true })
+    .isLength({ max: VALIDATION.BIO_MAX })
+    .withMessage(`A bio deve ter no máximo ${VALIDATION.BIO_MAX} caracteres.`)
+    .trim(),
+  validate
+];

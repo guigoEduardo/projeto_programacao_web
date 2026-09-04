@@ -26,3 +26,9 @@ exports.getMyProfile = async (req, res) => {
 exports.logout = async (req, res) => {
   return success(res, null, 'Logout realizado com sucesso.');
 };
+
+exports.updateProfile = async (req, res) => {
+  const { fullName, bio } = req.body;
+  const updatedUser = await userService.updateUserProfile(req.user.id, { fullName, bio }, req.file);
+  return success(res, updatedUser, 'Perfil atualizado com sucesso.');
+};

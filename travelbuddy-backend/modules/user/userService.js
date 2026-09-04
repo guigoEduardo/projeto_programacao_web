@@ -1,6 +1,8 @@
 const User = require('./userModel');
 const bcrypt = require('bcryptjs');
 const { generateToken } = require('../../config/jwt');
+const fs = require('fs');
+const path = require('path');
 
 async function registerUser(username, email, password, fullName) {
   const emailExists = await User.findOne({ where: { email } });
@@ -83,4 +85,44 @@ async function getUserProfile(userId) {
   return user;
 }
 
-module.exports = { registerUser, getPublicProfile, loginUser, getUserProfile };
+async function updateUserProfile(userId, { fullName, bio }, file) {
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    const error = new Error('Usuário não encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  user.fullName = fullName;
+  user.bio = bio;
+
+  if (file) {
+    const oldPicture = user.profilePicture;
+    user.profilePicture = file.filename;
+
+    if (oldPicture && oldPicture !== 'default-profile.png') {
+      const oldPath = path.join(__dirname, '..', '..', 'public', 'uploads', 'profiles', oldPicture);
+      fs.unlink(oldPath, (err) => {
+        if (err) console.error('Erro ao remover foto antiga:', err.message);
+      });
+    }
+  }
+
+  await user.save();
+
+  return {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    fullName: user.fullName,
+    bio: user.bio,
+    profilePicture: user.profilePicture,
+    followersCount: user.followersCount,
+    followingCount: user.followingCount,
+    reportsCount: user.reportsCount,
+    isAdmin: user.isAdmin
+  };
+}
+
+module.exports = { registerUser, getPublicProfile, loginUser, getUserProfile, updateUserProfile };
