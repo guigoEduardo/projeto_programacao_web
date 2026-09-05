@@ -237,3 +237,33 @@
 - [x] Logout → rota protegida redireciona ao Login, com ?redirect=...
 - [x] Login a partir da tela redirecionada volta para a rota original
 - [x] Editar o token manualmente e recarregar → redireciona ao Login automaticamente (interceptor de 401)
+
+# Checklists - Atividade 5
+
+## Parte A - Backend
+
+### Etapa 1
+- [x] Pasta public/uploads/profiles/ criada, com um default-profile.png dentro
+- [x] multer instalado
+- [x] BIO_MAX adicionado a config/constants.js
+- [x] middlewares/profileMulter.js criado
+- [x] require('path') e a linha de express.static adicionados, antes das rotas da API
+- [x] profileUpdateValidator, updateUserProfile, updateProfile e a rota PUT /profile/me criados, na ordem correta
+
+### Etapa 2 - Testes
+- [x] Atualização sem foto funciona, mantendo a foto atual
+- [x] Atualização com foto nova funciona, e a foto antiga (se não era a padrão) é removida do disco
+- [x] GET /uploads/profiles/<qualquer-arquivo> responde 200
+- [x] Bio acima de 255 caracteres é recusada com 400
+
+## Parte B - Frontend
+
+### Etapa 1
+- [x] Link para a tela de perfil visível na Navbar, só quando logado
+- [x] .env atualizado, utils/media.js criado
+- [x] updateProfile(formData) adicionada — a única chamada de toda a aplicação a sobrescrever o Content-Type padrão
+
+### Etapa 2 - Testes
+- [x] Tela carrega os dados reais do usuário ao montar
+- [x] Selecionar uma foto atualiza a prévia instantaneamente, sem chamada de rede
+- [x] Salvar funciona, com e sem trocar de foto
