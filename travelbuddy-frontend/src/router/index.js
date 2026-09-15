@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { useAuth } from '../composables/useAuth'
 
 const routes = [
   { path: '/', name: 'landing', component: () => import('../views/LandingView.vue') },
@@ -30,13 +30,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
+  const { isAuthenticated, isAdmin } = useAuth()
 
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if (to.meta.requiresAuth && !isAuthenticated) {
     return next({ name: 'login', query: { redirect: to.fullPath } })
   }
 
-  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+  if (to.meta.requiresAdmin && !isAdmin) {
     return next({ name: 'feed' })
   }
 

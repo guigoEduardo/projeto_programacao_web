@@ -267,3 +267,43 @@
 - [x] Tela carrega os dados reais do usuário ao montar
 - [x] Selecionar uma foto atualiza a prévia instantaneamente, sem chamada de rede
 - [x] Salvar funciona, com e sem trocar de foto
+
+---
+
+# Checklists - Atividade 6
+
+## Parte A - Backend
+
+### Checkpoint de Consistência
+- [x] checkpoint-01.md criado e respondido em 01 - Docs/atividade06/
+- [x] Todos os endpoints já construídos continuam respondendo como esperado
+
+## Parte B - Frontend
+
+### Tarefas
+- [x] bootstrap-icons incluído via CDN no index.html
+- [x] BaseInput.vue criado em src/components/base/
+- [x] BaseButton.vue criado em src/components/base/
+- [x] FormCard.vue criado em src/components/base/
+- [x] RegisterView.vue refatorada para usar BaseInput, BaseButton e FormCard
+- [x] LoginView.vue refatorada para usar BaseInput, BaseButton e FormCard
+- [x] MyProfileView.vue refatorada para usar BaseInput e BaseButton
+- [x] Tela de Registro visualmente consistente com Login e Perfil
+- [x] composables/useAuth.js criado
+- [x] Guarda de rota atualizado para usar useAuth()
+- [x] TheNavbar.vue atualizado para usar useAuth()
+- [x] TheSidebar.vue revisada, sem links para funcionalidades não construídas
+
+### Testes
+- [x] Cadastro redireciona ao Login, tela de Registro agora estilizada
+- [x] Login redireciona à tela principal
+- [x] Navbar alterna corretamente entre estado logado/deslogado
+- [x] Edição de Perfil continua funcionando (dados reais, edição, upload de foto)
+- [x] Deslogado, acesso direto a rota protegida redireciona ao Login
+- [x] Console do DevTools sem nenhum erro novo
+
+### Entrega
+- [x] registro-antes.jpg salvo em 01 - Docs/atividade06/
+- [x] registro-depois.jpg salvo em 01 - Docs/atividade06/
+- [x] tres-telas-consistentes.jpg salvo em 01 - Docs/atividade06/
+- [x] navbar-estados.jpg salvo em 01 - Docs/atividade06/

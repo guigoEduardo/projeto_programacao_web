@@ -7,7 +7,7 @@
         <router-link class="nav-link" to="/feed">Feed</router-link>
         <router-link class="nav-link" to="/busca">Busca</router-link>
 
-        <template v-if="!authStore.isAuthenticated">
+        <template v-if="!isAuthenticated">
           <router-link class="nav-link" to="/register">Criar Conta</router-link>
           <router-link class="nav-link" to="/login">Login</router-link>
         </template>
@@ -23,13 +23,13 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../../stores/auth'
+import { useAuth } from '../../composables/useAuth'
 
-const authStore = useAuthStore()
+const { isAuthenticated, logout } = useAuth()
 const router = useRouter()
 
 async function handleLogout() {
-  await authStore.logout()
+  await logout()
   router.push({ name: 'login' })
 }
 </script>

@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getMyProfile, updateProfile } from '../../services/authService'
 import { useAuthStore } from '../../stores/auth'
 import { getProfilePictureUrl, getLocalPreviewUrl } from '../../utils/media'
+import BaseInput from '../../components/base/BaseInput.vue'
+import BaseButton from '../../components/base/BaseButton.vue'
 
 const authStore = useAuthStore()
 
@@ -18,6 +20,8 @@ const saving = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 const bioError = ref('')
+
+const bioHint = computed(() => `${bio.value.length}/${BIO_MAX}`)
 
 onMounted(async () => {
   try {
@@ -42,7 +46,6 @@ function handleFileChange(event) {
 function validate() {
   bioError.value = ''
   errorMessage.value = ''
-
   if (!fullName.value.trim()) {
     errorMessage.value = 'O nome completo não pode ficar vazio.'
     return false
@@ -109,24 +112,15 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Nome completo</label>
-        <input v-model="fullName" type="text" class="form-control" />
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Bio</label>
-        <textarea v-model="bio" class="form-control" rows="3"></textarea>
-        <small class="text-muted">{{ bio.length }}/{{ BIO_MAX }}</small>
-        <div v-if="bioError" class="text-danger small">{{ bioError }}</div>
-      </div>
+      <BaseInput id="fullName" label="Nome completo" v-model="fullName" />
+      <BaseInput id="bio" label="Bio" v-model="bio" :rows="3" :hint="bioHint" :error="bioError" :maxlength="BIO_MAX" />
 
       <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
       <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
-      <button type="submit" class="btn btn-primary" :disabled="saving">
-        {{ saving ? 'Salvando...' : 'Salvar' }}
-      </button>
+      <BaseButton :loading="saving" loading-text="Salvando...">
+        Salvar
+      </BaseButton>
     </form>
   </div>
 </template>
