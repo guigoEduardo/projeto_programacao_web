@@ -4,7 +4,9 @@ var logger = require('morgan');
 var cors = require('cors');
 var searchRoutes = require('./modules/search/searchRoutes');
 var userRoutes = require('./modules/user/userRoutes');
+var destinationRoutes = require('./modules/destination/destinationRoutes');
 var errorHandler = require('./middlewares/errorHandler');
+require('./config/associations');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
@@ -24,6 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 app.use('/api', indexRouter);
 app.use('/api', searchRoutes);
 app.use('/api', userRoutes);
+app.use('/api', destinationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

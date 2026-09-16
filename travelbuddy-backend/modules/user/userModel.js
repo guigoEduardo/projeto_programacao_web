@@ -13,6 +13,7 @@ const User = sequelize.define('User',
     followersCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     followingCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     reportsCount: { type: DataTypes.INTEGER, defaultValue: 0 },
+    destinationsCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     isBlocked: { type: DataTypes.BOOLEAN, defaultValue: false },
     isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
   },
