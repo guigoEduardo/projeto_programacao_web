@@ -13,6 +13,7 @@
         </template>
 
         <template v-else>
+          <router-link class="nav-link" to="/relatos/novo">Novo Destino</router-link>
           <router-link class="nav-link" to="/perfil">Meu Perfil</router-link>
           <a class="nav-link" href="#" @click.prevent="handleLogout">Sair</a>
         </template>

@@ -307,3 +307,52 @@
 - [x] registro-depois.jpg salvo em 01 - Docs/atividade06/
 - [x] tres-telas-consistentes.jpg salvo em 01 - Docs/atividade06/
 - [x] navbar-estados.jpg salvo em 01 - Docs/atividade06/
+
+---
+
+# Checklists - Atividade 7
+
+## Parte A - Backend
+
+### Checklist de Tarefas
+- [x] Pasta public/uploads/destinations/ criada
+- [x] TITLE_MAX e DESCRIPTION_MAX adicionados a config/constants.js
+- [x] destinationModel.js criado com campo image (Grupo B)
+- [x] config/associations.js criado com hasMany/belongsTo entre User e Destination
+- [x] middlewares/destinationMulter.js criado com multer.single('image')
+- [x] destinationValidator.js, destinationService.js, destinationController.js e destinationRoutes.js criados
+- [x] Ordem de middlewares na rota: auth → multer → validator → controller
+- [x] destinationRoutes montado em app.js
+- [x] config/associations carregado antes do sync em app.js
+- [x] Tabela destinations confirmada no banco, com FK userId
+
+### Checklist de Testes
+- [x] Upload completo funciona e destinations_count do usuário incrementa
+- [x] POST sem token retorna 401
+- [x] POST com token inválido retorna 401
+- [x] POST sem arquivo retorna 422
+
+## Parte B - Frontend
+
+### Checklist de Tarefas
+- [x] destinationService.js criado, recebendo onUploadProgress como parâmetro
+- [x] Formulário completo em UploadView.vue (título, descrição, categoria, imagem)
+- [x] Barra de progresso funcionando
+- [x] Prévia de imagem funcionando
+- [x] Link "Novo Destino" adicionado à Navbar, visível só para usuários autenticados
+
+### Checklist de Testes
+- [x] Login → clique em "Novo Destino" → URL muda para /relatos/novo sem recarregar
+- [x] Envio vazio → erros de campo obrigatório exibidos
+- [x] Seleção de imagem → prévia aparece sem chamada de rede
+- [x] Envio → barra de progresso avança → mensagem de sucesso exibida
+- [x] Network → Content-Type: multipart/form-data; boundary=... confirmado
+- [x] Banco confirmado: registro criado e destinations_count incrementado
+
+### Entrega
+- [x] ficha-preparacao.md salvo em 01 - Docs/atividade07/
+- [x] formulario-preenchido.jpg salvo em 01 - Docs/atividade07/
+- [x] progresso-upload.jpg salvo em 01 - Docs/atividade07/
+- [x] upload-multipart.jpg salvo em 01 - Docs/atividade07/
+- [x] link-envio.jpg salvo em 01 - Docs/atividade07/
+- [x] alcançabilidade.md salvo em 01 - Docs/atividade07/
