@@ -23,3 +23,27 @@
 a {
   color: var(--brand-color);
 }
+
+.destination-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
+}
+
+.destination-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.destination-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background-color: #e9ecef;
+}
+
+.destination-detail-img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  background-color: #f8f9fa;
+}

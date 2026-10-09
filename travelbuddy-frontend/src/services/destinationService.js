@@ -6,3 +6,11 @@ export function createDestination(formData, onUploadProgress) {
     onUploadProgress
   })
 }
+
+export function getDestinationById(id) {
+  return api.get(`/destinations/${id}`)
+}
+
+export function getFeed(page = 1, limit = 12) {
+  return api.get('/feed', { params: { page, limit } })
+}

@@ -5,6 +5,10 @@ export function getProfilePictureUrl(filename) {
   return `${API_BASE}/uploads/profiles/${filename}`
 }
 
+export function getDestinationImageUrl(filename) {
+  return `${API_BASE}/uploads/destinations/${filename}`
+}
+
 export function getLocalPreviewUrl(file) {
   return URL.createObjectURL(file)
 }

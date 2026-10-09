@@ -21,4 +21,44 @@ async function createDestination(userId, { title, description, category }, file)
   return destination;
 }
 
-module.exports = { createDestination };
+async function getDestinationDetails(id, viewerId) {
+  const destination = await Destination.findByPk(id, {
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'username', 'fullName', 'profilePicture']
+      }
+    ]
+  });
+
+  if (!destination) {
+    const error = new Error('Destino não encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  await destination.increment('viewsCount');
+  await destination.reload();
+
+  const isOwner = viewerId ? destination.userId === viewerId : false;
+
+  return { destination, isOwner };
+}
+
+async function getFeedDestinations(page, limit) {
+  const offset = (page - 1) * limit;
+
+  return Destination.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'username', 'fullName', 'profilePicture']
+      }
+    ],
+    order: [['createdAt', 'DESC']],
+    limit,
+    offset
+  });
+}
+
+module.exports = { createDestination, getDestinationDetails, getFeedDestinations };
