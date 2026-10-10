@@ -356,3 +356,49 @@
 - [x] upload-multipart.jpg salvo em 01 - Docs/atividade07/
 - [x] link-envio.jpg salvo em 01 - Docs/atividade07/
 - [x] alcançabilidade.md salvo em 01 - Docs/atividade07/
+
+---
+
+# Checklists - Atividade 8
+
+## Parte A - Backend
+
+### Checklist de Tarefas
+- [x] middlewares/optionalAuth.js criado
+- [x] getDestinationDetails / getFeedDestinations adicionados ao service
+- [x] Controller e rota do detalhe criados, com optionalAuth
+- [x] Coluna de visualizações criada (viewsCount no destinationModel.js)
+- [x] getFeed adicionado a userController.js / userRoutes.js
+
+### Checklist de Testes
+- [x] Detalhe sem token → 200, isOwner: false, contagem de visualizações em 1
+- [x] Detalhe com o token do dono → 200, isOwner: true, contagem em 2
+- [x] Detalhe de um item inexistente → 404
+- [x] Feed sem token → 401
+- [x] Feed com token, ?page=1&limit=1 → um item só
+- [x] Feed com token, ?page=2&limit=1 → [] (só há um item) ou o próximo item
+
+Itens de streaming (rota /stream, Range, 206) não se aplicam: projeto Grupo B, arquivo único que é a própria imagem.
+
+## Parte B - Frontend
+
+### Checklist de Tarefas
+- [x] getDestinationImageUrl adicionada a utils/media.js, apontando para o caminho estático
+- [x] Classes de card adicionadas ao main.css, com proporção 4:3 para imagem
+- [x] getDestinationById e getFeed criadas no destinationService.js
+- [x] Componente DestinationCard.vue criado, adaptado ao domínio de destinos
+- [x] Tela de Feed exibindo itens reais, com paginação "Carregar mais" funcionando
+- [x] Tela de Detalhe exibindo o destino real, com a imagem em resolução real
+- [x] isOwner recebido da API e guardado no estado da tela, sem uso visual ainda
+
+### Checklist desta etapa
+- [x] Login → link Feed na Navbar → itens reais aparecendo
+- [x] Clique num card → navegação para o detalhe, sem recarregar a página
+- [x] Imagem do detalhe carrega em resolução real (maior que a miniatura do card)
+- [x] Recarregar o detalhe (F5) → contagem de visualizações sobe (confirmado via curl)
+- [x] Id inexistente pela URL → mensagem de erro, sem a tela quebrar
+
+### Entrega
+- [x] feed-real.jpg salvo em 01 - Docs/atividade08/
+- [x] detalhe-real.jpg salvo em 01 - Docs/atividade08/
+- [x] Prints dos 6 curls salvos em 01 - Docs/atividade08/
