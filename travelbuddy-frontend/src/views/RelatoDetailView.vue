@@ -1,10 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getDestinationById } from '../services/destinationService'
 import { getDestinationImageUrl, getProfilePictureUrl } from '../utils/media'
 
 const route = useRoute()
+const router = useRouter()
 
 const destination = ref(null)
 const isOwner = ref(false)
@@ -22,6 +23,10 @@ const createdAtLabel = computed(() =>
     ? new Date(destination.value.createdAt).toLocaleDateString('pt-BR')
     : ''
 )
+
+async function editDestination() {
+  await router.push({ name: 'relato-edit', params: { id: destination.value.id } })
+}
 
 onMounted(async () => {
   try {
@@ -49,6 +54,9 @@ onMounted(async () => {
       <img :src="imageUrl" :alt="destination.title" class="destination-detail-img" />
 
       <div class="card-body">
+        <div v-if="isOwner" class="d-flex justify-content-end mb-2">
+          <button type="button" class="btn btn-sm btn-outline-success" @click="editDestination"><i class="bi bi-pencil me-1" />Editar</button>
+        </div>
         <span class="badge bg-success mb-2">{{ destination.category }}</span>
         <h2 class="card-title">{{ destination.title }}</h2>
         <p v-if="destination.description" class="card-text">{{ destination.description }}</p>
@@ -63,7 +71,7 @@ onMounted(async () => {
             height="32"
           />
           <span class="text-muted small">
-            por {{ author ? author.username : 'Desconhecido' }} em {{ createdAtLabel }}
+            por <RouterLink v-if="author" :to="{ name: 'public-profile', params: { username: author.username } }" class="text-decoration-none">{{ author.username }}</RouterLink><span v-else>Desconhecido</span> em {{ createdAtLabel }}
             · {{ destination.viewsCount }} visualizações
           </span>
         </div>

@@ -16,6 +16,10 @@ export function getMyProfile() {
   return api.get('/profile/me')
 }
 
+export function getPublicProfile(username) {
+  return api.get(`/profile/${encodeURIComponent(username)}`)
+}
+
 export function updateProfile(formData) {
   return api.put('/profile/me', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { generateToken } = require('../../config/jwt');
 const fs = require('fs');
 const path = require('path');
+const Destination = require('../destination/destinationModel');
 
 async function registerUser(username, email, password, fullName) {
   const emailExists = await User.findOne({ where: { email } });
@@ -29,10 +30,11 @@ async function registerUser(username, email, password, fullName) {
   };
 }
 
-async function getPublicProfile(username) {
+async function getPublicProfile(username, viewerId) {
   const user = await User.findOne({
     where: { username },
-    attributes: ['id', 'username', 'fullName', 'bio', 'profilePicture', 'followersCount', 'followingCount', 'reportsCount']
+    attributes: ['id', 'username', 'fullName', 'bio', 'profilePicture', 'followersCount', 'followingCount', 'reportsCount', 'destinationsCount'],
+    include: [{ model: Destination, attributes: ['id', 'userId', 'title', 'description', 'category', 'image', 'viewsCount', 'createdAt'], separate: true, order: [['createdAt', 'DESC']] }]
   });
 
   if (!user) {
@@ -41,7 +43,9 @@ async function getPublicProfile(username) {
     throw error;
   }
 
-  return user;
+  const result = user.toJSON();
+  result.isOwner = Boolean(viewerId && viewerId === user.id);
+  return result;
 }
 
 async function loginUser(email, password) {

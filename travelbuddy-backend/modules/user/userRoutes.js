@@ -11,7 +11,7 @@ router.post('/login', loginValidator, asyncHandler(userController.login));
 router.post('/logout', asyncHandler(userController.logout));
 router.get('/profile/me', isAuthenticated, asyncHandler(userController.getMyProfile));
 router.put('/profile/me', isAuthenticated, profileMulter, profileUpdateValidator, asyncHandler(userController.updateProfile));
-router.get('/profile/:username', asyncHandler(userController.getPublicProfile));
+router.get('/profile/:username', require('../../middlewares/optionalAuth'), asyncHandler(userController.getPublicProfile));
 router.get('/feed', isAuthenticated, asyncHandler(userController.getFeed));
 
 module.exports = router;

@@ -2,7 +2,7 @@
   <div class="container py-4" style="max-width: 600px;">
     <h2 class="mb-4">Novo Destino</h2>
 
-    <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div v-if="successMessage" class="alert alert-success">{{ successMessage }} <router-link :to="{ name: 'my-relatos' }" class="alert-link ms-1">Ver Meus Itens</router-link></div>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
     <div class="mb-3">

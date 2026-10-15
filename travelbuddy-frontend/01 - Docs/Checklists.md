@@ -402,3 +402,75 @@ Itens de streaming (rota /stream, Range, 206) não se aplicam: projeto Grupo B, 
 - [x] feed-real.jpg salvo em 01 - Docs/atividade08/
 - [x] detalhe-real.jpg salvo em 01 - Docs/atividade08/
 - [x] Prints dos 6 curls salvos em 01 - Docs/atividade08/
+
+---
+
+# Checklists - Atividade 9
+
+## Parte A - Backend
+
+### Checklist de tarefas
+- [x] Correção da contagem de visualizações aplicada ao detalhe
+- [x] GET /api/my-destinations lista destinos do usuário autenticado em ordem decrescente de criação
+- [x] GET /api/destinations/:id/edit verifica existência (404) antes da propriedade (403) e não incrementa visualizações
+- [x] PUT /api/destinations/:id atualiza texto e permite trocar a imagem opcionalmente
+- [x] DELETE /api/destinations/:id exclui registro, imagem e decrementa destinationsCount
+- [x] GET /api/profile/:username retorna destinos ordenados e isOwner
+- [x] Rota de perfil público usa optionalAuth e permanece depois de /profile/me
+- [x] errorHandler e validação removem arquivos recebidos por requisições que falham
+- [x] Fluxo do banco para o disco respeitado ao trocar ou excluir imagem
+
+### Checklist de testes
+- [x] GET /my-destinations sem token retorna 401 (print salvo)
+- [x] GET /my-destinations com A retorna 200
+- [x] GET /my-destinations com B sem destinos retorna 200 com lista vazia; repetir o print se a resposta capturada foi 401
+- [x] GET /my-destinations com A confirma a ordem do mais novo para o mais antigo usando pelo menos dois destinos
+- [x] GET /destinations/:id/edit sem token retorna 401
+- [x] GET /destinations/:id/edit com B retorna 403
+- [x] GET /destinations/:id/edit com ID inexistente retorna 404
+- [x] GET /destinations/:id/edit com A retorna 200 sem alterar viewsCount
+- [x] PUT só com texto retorna 200 e mantém imagem e contagem de arquivos
+- [x] PUT com nova imagem retorna 200, troca o nome do arquivo e mantém a contagem de arquivos
+- [x] PUT com imagem por B retorna 403 e não aumenta a contagem de arquivos
+- [x] PUT com imagem e título vazio retorna 400 e não aumenta a contagem de arquivos
+- [x] DELETE com B retorna 403
+- [x] DELETE com A retorna 200, remove imagem e decrementa a contagem do usuário
+- [x] GET do item excluído retorna 404
+- [x] Repetir DELETE do item excluído retorna 404
+- [x] GET /profile/:username anônimo retorna isOwner: false e a lista de destinos
+- [x] GET /profile/:username com token do dono retorna isOwner: true
+- [x] GET /profile/:username com token de B retorna isOwner: false
+- [x] GET /profile/:username para usuário inexistente retorna 404
+
+## Parte B - Frontend
+
+### Checklist de tarefas
+- [x] useClickOutside fecha o menu do avatar ao clicar fora ou pressionar Esc
+- [x] BaseModal genérico criado
+- [x] DestinationCard refatorado sem link envolvendo o card inteiro, com autor clicável e slot de ações
+- [x] Tela de Perfil Público exibe destinos e os botões conforme o visitante e o dono
+- [x] Tela Meus Itens permite editar e excluir com confirmação em modal fora do card
+- [x] Tela Editar Item carrega formulário e permite manter ou trocar a imagem
+- [x] Detalhe mostra o botão Editar somente para o dono e link clicável para o autor
+- [x] Mensagem de sucesso do upload inclui link para Meus Itens
+- [x] Navbar usa menu suspenso no avatar
+- [x] Feed continua usando DestinationCard sem alterações na navegação
+
+### Checklist de testes e prints
+- [x] Quatro prints de interface salvos em 01 - Docs/atividade09/
+- [x] Menu do avatar abre, fecha ao clicar fora, fecha com Esc e fecha ao escolher uma opção
+- [x] Perfil próprio e perfil de outra pessoa mostram as ações adequadas
+- [x] Perfil público anônimo não mostra ações exclusivas do usuário autenticado
+- [x] Meus Itens vazio mostra estado vazio e link para publicar
+- [x] Modal de exclusão abre fora do card; cancelar, X, clique fora e Esc fecham sem excluir
+- [x] Confirmar exclusão remove o item da lista sem recarregar
+- [x] Edição sem imagem mantém o arquivo; selecionar nova imagem atualiza a prévia
+- [x] Detalhe mostra Editar para o dono e não mostra para outro usuário
+- [x] Regressão visual de Feed, Detalhe, Upload, Perfil, Login e Logout conferida
+
+### Entrega
+- [x] respostas.md criado em 01 - Docs/atividade09/
+- [x] Prints de interface e evidências dos curls reunidos em 01 - Docs/atividade09/
+- [x] Atualizar este checklist após concluir os dois casos pendentes de GET /my-destinations
+- [x] Criar ZIP do backend sem node_modules
+- [x] Criar ZIP do frontend sem node_modules

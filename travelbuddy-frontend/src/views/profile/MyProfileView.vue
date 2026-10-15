@@ -78,6 +78,7 @@ async function handleSubmit() {
 
     if (authStore.user) {
       authStore.user.fullName = response.data.fullName
+      authStore.user.profilePicture = response.data.profilePicture
       localStorage.setItem('user', JSON.stringify(authStore.user))
     }
   } catch (err) {

@@ -33,7 +33,8 @@ export const useAuthStore = defineStore('auth', {
       if (!this.token) return
       try {
         const response = await getMyProfile()
-        console.log('Perfil autenticado OK:', response.data)
+        this.user = { ...this.user, ...response.data }
+        localStorage.setItem('user', JSON.stringify(this.user))
       } catch (err) {
         this.clearSession()
       }
