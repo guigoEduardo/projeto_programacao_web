@@ -11,6 +11,7 @@ const routes = [
   { path: '/relatos/:id', name: 'relato-detail', component: () => import('../views/RelatoDetailView.vue') },
   { path: '/relatos/:id/editar', name: 'relato-edit', component: () => import('../views/EditRelatoView.vue'), meta: { requiresAuth: true } },
   { path: '/meus-relatos', name: 'my-relatos', component: () => import('../views/MyRelatosView.vue'), meta: { requiresAuth: true } },
+  { path: '/curtidos', name: 'liked-destinations', component: () => import('../views/LikedDestinationsView.vue'), meta: { requiresAuth: true } },
   { path: '/perfil', name: 'my-profile', component: () => import('../views/profile/MyProfileView.vue'), meta: { requiresAuth: true } },
   { path: '/perfil/:username', name: 'public-profile', component: () => import('../views/profile/PublicProfileView.vue') },
   { path: '/favoritos', name: 'favorites', component: () => import('../views/MyFavoritesView.vue'), meta: { requiresAuth: true } },

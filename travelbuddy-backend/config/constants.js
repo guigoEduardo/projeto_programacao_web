@@ -5,6 +5,7 @@ module.exports = {
     PASSWORD_MIN: 6,
     BIO_MAX: 255,
     TITLE_MAX: 100,
-    DESCRIPTION_MAX: 500
+    DESCRIPTION_MAX: 500,
+    COMMENT_MAX: 500
   }
 };

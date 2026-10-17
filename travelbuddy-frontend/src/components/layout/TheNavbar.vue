@@ -40,6 +40,7 @@ async function handleLogout() {
             <RouterLink class="avatar-menu-item" :to="{ name: 'my-profile' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-person-gear" />Editar Perfil</RouterLink>
             <RouterLink class="avatar-menu-item" :to="{ name: 'public-profile', params: { username: user?.username } }" role="menuitem" @click="menuOpen = false"><i class="bi bi-person-vcard" />Ver Perfil</RouterLink>
             <RouterLink class="avatar-menu-item" :to="{ name: 'my-relatos' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-images" />Meus Itens</RouterLink>
+            <RouterLink class="avatar-menu-item" :to="{ name: 'liked-destinations' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-heart" />Curtidos</RouterLink>
             <div class="dropdown-divider my-2" />
             <button class="avatar-menu-item text-danger" role="menuitem" @click="handleLogout"><i class="bi bi-box-arrow-right" />Sair</button>
           </div>

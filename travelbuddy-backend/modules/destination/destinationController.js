@@ -9,8 +9,8 @@ exports.create = async (req, res) => {
 
 exports.getDetails = async (req, res) => {
   const viewerId = req.user ? req.user.id : null;
-  const { destination, isOwner } = await destinationService.getDestinationDetails(req.params.id, viewerId);
-  return success(res, { destination, isOwner }, 'Destino carregado com sucesso!');
+  const { destination, isOwner, isLiked } = await destinationService.getDestinationDetails(req.params.id, viewerId);
+  return success(res, { destination, isOwner, isLiked }, 'Destino carregado com sucesso!');
 };
 
 exports.getMine = async (req, res) => success(res, await destinationService.getMyDestinations(req.user.id));

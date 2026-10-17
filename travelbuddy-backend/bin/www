@@ -7,9 +7,15 @@ var port = process.env.PORT || 3000;
 app.set('port', port);
 
 var server = http.createServer(app);
-server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+app.locals.databaseReady
+  .then(() => server.listen(port))
+  .catch(error => {
+    console.error('Erro ao sincronizar banco:', error);
+    process.exit(1);
+  });
 
 function onError(error) {
   if (error.syscall !== 'listen') {

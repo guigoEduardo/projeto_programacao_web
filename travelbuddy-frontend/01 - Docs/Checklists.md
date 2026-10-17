@@ -474,3 +474,72 @@ Itens de streaming (rota /stream, Range, 206) não se aplicam: projeto Grupo B, 
 - [x] Atualizar este checklist após concluir os dois casos pendentes de GET /my-destinations
 - [x] Criar ZIP do backend sem node_modules
 - [x] Criar ZIP do frontend sem node_modules
+
+---
+
+# Checklists - Atividade 10: Curtidas e Comentários
+
+## Parte A - Backend
+
+### Implementação
+- [x] `likesCount` e `commentsCount` adicionados ao model Destination.
+- [x] Models Like e Comment criados; associações em ambos os sentidos.
+- [x] Índice único composto em `userId` e `destinationId` na tabela de curtidas.
+- [x] Rotas autenticadas de toggle e curtidos, status de curtida público e rotas de comentários.
+- [x] Curtidas/comentários e contadores atualizados dentro de transações.
+- [x] Detalhe devolve `isLiked`; exclusão remove curtidas e comentários na transação.
+- [x] Perfil público entrega os dois contadores; validadores antigos fazem trim antes de notEmpty.
+- [x] Validador do comentário aplica trim antes de notEmpty e limita a 500 caracteres.
+
+### Testes
+- [x] Curtir sem token retorna 401; curtir entidade inexistente retorna 404.
+- [x] Curtidas repetidas alternam o estado e o contador conforme esperado; duas contas podem curtir o mesmo destino.
+- [x] `like-status` e detalhe retornam o estado correto para visitante e usuário autenticado.
+- [x] Banco recusa curtida duplicada pelo índice único composto.
+- [x] Lista de curtidos exige autenticação e inclui os destinos e seus autores.
+- [x] Comentários sem token, vazios/só com espaços e acima de 500 caracteres são rejeitados; comentário válido é aparado e inclui autor.
+- [x] Listagem pública de comentários funciona em ordem decrescente de criação e o contador corresponde aos itens.
+- [x] Exclusão de destino com curtidas e comentários limpa os registros relacionados e atualiza os contadores.
+- [x] Validadores antigos rejeitam título/nome composto apenas por espaços.
+- [x] Regressão de upload, detalhe, feed, edição e perfil conferida.
+
+### Evidências
+- [x] 17 prints dos curls da Parte A salvos em `01 - Docs/atividade10/`.
+- [x] Evidência do índice único no MySQL salva como `unique.jpg`.
+
+## Parte B - Frontend
+
+### Implementação
+- [x] Services de curtidas e comentários e formatador criados.
+- [x] LikeButton aplica atualização otimista e rollback em erro.
+- [x] Visitante que tenta curtir volta do login ao detalhe.
+- [x] Seção de comentários inclui loading, erro, vazio, validação e inserção do novo comentário no topo.
+- [x] Conteúdo usa interpolação Vue e mantém quebras de linha.
+- [x] Detalhe e cards mostram interações e contadores.
+- [x] Rota de destinos curtidos adicionada e acessível pelo menu.
+
+### Testes
+- [x] Visitante vê curtida e comentários, não recebe formulário, e após login retorna ao detalhe.
+- [x] Curtir atualiza o coração imediatamente, persiste após recarregar e descurtir desfaz a curtida.
+- [x] Slow 4G mantém a atualização otimista; Offline faz rollback e exibe erro.
+- [x] Validação de comentário vazio, espaços e acima de 500 caracteres impede envio; comentário válido de duas linhas aparece no topo com quebras preservadas.
+- [x] Comentário com HTML é exibido como texto, sem interpretar tags ou executar script.
+- [x] Contadores aparecem atualizados no Feed, Perfil e Meus Itens.
+- [x] Tela de curtidos é acessível pelo menu; descurtir ou excluir remove o destino da lista.
+- [x] Regressão de Feed, Perfil, Meus Itens, Upload, Login e Logout conferida.
+
+### Evidências
+- [x] Detalhe com curtida ativa e comentário: `detalhe-interacao.jpg`.
+- [x] Atualização otimista com Slow 4G: `otimista.jpg`.
+- [x] Rollback com Offline: `rollback.jpg`.
+- [x] Tela de destinos curtidos: `curtidos.jpg`.
+
+## Entrega Atividade 10
+
+- [x] Respostas da Atividade 10 acrescentadas ao `01 - Docs/respostas.md` existente.
+- [x] Prints de interface, 17 evidências de curl e evidência do banco salvos em `01 - Docs/atividade10/`.
+- [x] Os seis tópicos da seção de respostas do enunciado respondidos em parágrafos curtos.
+- [x] Este checklist atualizado com os itens da atividade marcados.
+- [x] Gerar `GuilhermeGoncalves-TravelBuddy-backend.zip` sem `node_modules`, incluindo os módulos `like` e `comment`.
+- [x] Gerar `GuilhermeGoncalves-TravelBuddy-frontend.zip` sem `node_modules`, incluindo `LikeButton`, `CommentSection`, tela de curtidos e router atualizado.
+

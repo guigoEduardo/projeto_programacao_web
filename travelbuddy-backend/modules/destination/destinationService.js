@@ -1,5 +1,7 @@
 const Destination = require('./destinationModel');
 const User = require('../user/userModel');
+const Like = require('../like/likeModel');
+const Comment = require('../comment/commentModel');
 const fs = require('fs/promises');
 const path = require('path');
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'destinations');
@@ -60,8 +62,9 @@ async function getDestinationDetails(id, viewerId) {
   await destination.reload();
 
   const isOwner = viewerId ? destination.userId === viewerId : false;
+  const isLiked = viewerId ? Boolean(await Like.findOne({ where: { userId: viewerId, destinationId: destination.id } })) : false;
 
-  return { destination, isOwner };
+  return { destination, isOwner, isLiked };
 }
 
 async function getFeedDestinations(page, limit) {
@@ -104,6 +107,8 @@ async function deleteDestination(id, userId) {
   const destination = await findOwnedDestination(id, userId);
   const sequelize = require('../../config/database');
   await sequelize.transaction(async (transaction) => {
+    await Like.destroy({ where: { destinationId: destination.id }, transaction });
+    await Comment.destroy({ where: { destinationId: destination.id }, transaction });
     await destination.destroy({ transaction });
     await User.decrement('destinationsCount', { by: 1, where: { id: userId, destinationsCount: { [require('sequelize').Op.gt]: 0 } }, transaction });
   });

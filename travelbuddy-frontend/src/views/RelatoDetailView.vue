@@ -3,12 +3,16 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getDestinationById } from '../services/destinationService'
 import { getDestinationImageUrl, getProfilePictureUrl } from '../utils/media'
+import LikeButton from '../components/LikeButton.vue'
+import CommentSection from '../components/CommentSection.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const destination = ref(null)
 const isOwner = ref(false)
+const isLiked = ref(false)
+const likeError = ref('')
 const loading = ref(true)
 const errorMessage = ref('')
 
@@ -33,6 +37,7 @@ onMounted(async () => {
     const response = await getDestinationById(route.params.id)
     destination.value = response.data.destination
     isOwner.value = response.data.isOwner
+    isLiked.value = response.data.isLiked
   } catch (err) {
     errorMessage.value = err.message
   } finally {
@@ -75,6 +80,9 @@ onMounted(async () => {
             · {{ destination.viewsCount }} visualizações
           </span>
         </div>
+        <div class="detail-actions mt-3"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" @update:model-value="likeError = ''" @error="likeError = $event" /></div>
+        <p v-if="likeError" class="alert alert-danger py-2 mt-2 mb-0" role="alert">{{ likeError }}</p>
+        <CommentSection :destination-id="destination.id" v-model:count="destination.commentsCount" />
       </div>
     </div>
   </div>

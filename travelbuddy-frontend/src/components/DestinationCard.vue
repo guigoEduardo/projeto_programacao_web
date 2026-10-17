@@ -18,6 +18,7 @@ const author = computed(() => props.destination.User ?? props.destination.user ?
         <h2 class="h5 card-title mb-2">{{ destination.title }}</h2>
       </router-link>
       <p v-if="destination.description" class="card-text text-muted small destination-description">{{ destination.description }}</p>
+      <div class="destination-card-stats"><span><i class="bi bi-heart-fill" /> {{ destination.likesCount || 0 }}</span><span><i class="bi bi-chat-fill" /> {{ destination.commentsCount || 0 }}</span></div>
       <div class="mt-auto d-flex align-items-center justify-content-between gap-2 pt-2">
         <router-link v-if="author" :to="{ name: 'public-profile', params: { username: author.username } }" class="destination-author" @click.stop>
           <img :src="getProfilePictureUrl(author.profilePicture)" :alt="''" class="rounded-circle" width="30" height="30" />

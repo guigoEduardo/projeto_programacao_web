@@ -34,7 +34,7 @@ async function getPublicProfile(username, viewerId) {
   const user = await User.findOne({
     where: { username },
     attributes: ['id', 'username', 'fullName', 'bio', 'profilePicture', 'followersCount', 'followingCount', 'reportsCount', 'destinationsCount'],
-    include: [{ model: Destination, attributes: ['id', 'userId', 'title', 'description', 'category', 'image', 'viewsCount', 'createdAt'], separate: true, order: [['createdAt', 'DESC']] }]
+    include: [{ model: Destination, attributes: ['id', 'userId', 'title', 'description', 'category', 'image', 'viewsCount', 'likesCount', 'commentsCount', 'createdAt'], separate: true, order: [['createdAt', 'DESC']] }]
   });
 
   if (!user) {

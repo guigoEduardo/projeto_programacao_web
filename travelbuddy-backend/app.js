@@ -5,6 +5,8 @@ var cors = require('cors');
 var searchRoutes = require('./modules/search/searchRoutes');
 var userRoutes = require('./modules/user/userRoutes');
 var destinationRoutes = require('./modules/destination/destinationRoutes');
+var likeRoutes = require('./modules/like/likeRoutes');
+var commentRoutes = require('./modules/comment/commentRoutes');
 var errorHandler = require('./middlewares/errorHandler');
 require('./config/associations');
 require('dotenv').config();
@@ -27,6 +29,8 @@ app.use('/api', indexRouter);
 app.use('/api', searchRoutes);
 app.use('/api', userRoutes);
 app.use('/api', destinationRoutes);
+app.use('/api', likeRoutes);
+app.use('/api', commentRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
@@ -39,8 +43,7 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 const sequelize = require('./config/database');
-sequelize.sync({ alter: true })
-  .then(() => console.log('Banco de dados sincronizado!'))
-  .catch(err => console.error('Erro ao sincronizar banco:', err));
+app.locals.databaseReady = sequelize.sync({ alter: true })
+  .then(() => console.log('Banco de dados sincronizado!'));
 
 module.exports = app;
