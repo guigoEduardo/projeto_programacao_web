@@ -543,3 +543,55 @@ Itens de streaming (rota /stream, Range, 206) não se aplicam: projeto Grupo B, 
 - [x] Gerar `GuilhermeGoncalves-TravelBuddy-backend.zip` sem `node_modules`, incluindo os módulos `like` e `comment`.
 - [x] Gerar `GuilhermeGoncalves-TravelBuddy-frontend.zip` sem `node_modules`, incluindo `LikeButton`, `CommentSection`, tela de curtidos e router atualizado.
 
+---
+
+# Checklists — Atividade 11: Seguidores e feed de quem eu sigo
+
+## Ficha e alcançabilidade (ADR-012)
+
+- [x] Entidade: Destination; contadores: followersCount/followingCount; feed: GET /api/following-destinations.
+- [x] Caminho seguir: Feed → autor do card → perfil público → FollowButton. Visitante vai ao login com redirect para o perfil.
+- [x] Caminho listas: números Seguidores/Seguindo do perfil → listas públicas → abas → pessoa → perfil; link de retorno disponível.
+- [x] Caminho feed filtrado: item Seguindo na Sidebar → /feed/seguindo.
+- [x] Conferência prévia: a rota /feed/seguindo já existia, mas era placeholder; TheSidebar não tinha esse link e não era renderizada no App. O link foi incluído e a Sidebar integrada ao layout.
+
+## Parte A — Backend
+
+- [x] followModel criado, com referências a users, índice único (follower_id, following_id) e índice following_id.
+- [x] Associações Follower/Following declaradas; tabela e índices conferidos no MySQL.
+- [x] Service, controller e rotas registrados antes do 404/errorHandler.
+- [x] parseUserId converte na borda e rejeita valores que não são inteiros positivos seguros.
+- [x] Relação e dois contadores na mesma transação; locks ordenados para chamadas concorrentes.
+- [x] Toggle autenticado com 201/200; self-follow 400; usuário inexistente 404.
+- [x] follow-status autenticado, listas públicas sem senha/e-mail, ordenadas da relação mais recente para a antiga.
+- [x] Feed paginado com Op.in e retorno [] antecipado; isFollowing no perfil público conforme visitante/dono/seguidor.
+- [x] Oito grupos da Etapa 4 verificados por integração automatizada contra a API/MySQL: erros, alternância, três contas, contadores, status/perfis, listas, feed/paginação, índice único e regressão.
+- [x] Concorrência e rollback de transação também verificados nas 46 verificações de integração.
+
+## Parte B — Frontend
+
+- [x] followService com toggle, status, seguidores, seguindo e feed filtrado.
+- [x] FollowButton com dois defineModel, nowFollowing local, atualização otimista, rollback, mensagem de erro e isBusy.
+- [x] Perfil público ligado por v-model; botão para visitante/outros e ausente no perfil próprio; contadores são links, inclusive em Meu Perfil.
+- [x] FollowListView compartilhada por duas rotas públicas com props.kind, chamadas perfil → lista e watch imediato de kind/username.
+- [x] Listas com abas ativas, loading, erro, vazio com nome e links para perfis; proteção contra respostas antigas após trocar de pessoa/aba.
+- [x] Feed filtrado com page/hasMore/Carregar mais, vazio com link ao Feed e tratamento de erro/repetição.
+- [x] Sidebar alcançável e feed protegido; guards corrigidos para ler .value da autenticação.
+- [x] Build de produção validado.
+- [x] Bootstrap e ícones incluídos nas dependências locais, com imports no main.js, para manter os estilos disponíveis sem CDN e durante o teste Offline.
+- [x] Fluxos automatizados no Chrome: visitante/login/retorno; estado e contador otimistas; bloqueio durante requisição; F5; Offline/rollback; listas/abas/perfil próprio; vazio/erro; nova pessoa; Sidebar/feed; remoção do feed ao deixar de seguir; sem erros JavaScript.
+- [x] Nove passos da Etapa 5 conferidos por interações no navegador, incluindo regressão de editar perfil, Feed, Detalhe/curtir/comentar, Meus Itens, Curtidos e login/logout. Slow 4G conferido e capturado na aba Network real do Chrome.
+
+## Entrega e evidências
+
+- [x] atividade11/respostas.md com as seis respostas criado.
+- [x] seguindo.jpg: perfil de outra pessoa com botão Seguindo e contador atualizado.
+- [x] otimista.jpg: aba Network real com Slow 4G, requisição pendente, botão e contador já alterados.
+- [x] rollback.jpg: mensagem de erro e estado restaurado após tentativa Offline.
+- [x] seguidores.jpg: lista de Seguidores com as duas abas.
+- [x] feed-seguindo.jpg: feed filtrado com destino da pessoa seguida.
+- [x] follows.jpg: captura real do MySQL Workbench com linhas da tabela, índices e erro 1062 ao repetir a relação.
+- [x] 29 prints das chamadas curl da Parte A, Etapa 4, incluindo upload, curtir, comentar, editar, excluir e feed geral. Comandos executados com curl.exe; respostas HTTP reais exibidas em visualizador de texto para captura.
+- [x] GuilhermeGoncalves-TravelBuddy-backend.zip gerado sem node_modules/dist e incluindo o módulo follow.
+- [x] GuilhermeGoncalves-TravelBuddy-frontend.zip gerado sem node_modules/dist e incluindo código, respostas, checklist e os 35 JPGs da Atividade 11.
+

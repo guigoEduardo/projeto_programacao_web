@@ -5,21 +5,24 @@ import { getPublicProfile } from '../../services/authService'
 import { useAuth } from '../../composables/useAuth'
 import { getProfilePictureUrl } from '../../utils/media'
 import DestinationCard from '../../components/DestinationCard.vue'
+import FollowButton from '../../components/FollowButton.vue'
 
 const route = useRoute()
-const { isAuthenticated, user } = useAuth()
+const { user } = useAuth()
 const profile = ref(null)
 const loading = ref(true)
 const errorMessage = ref('')
 const isOwnProfile = computed(() => Boolean(profile.value && user.value?.id === profile.value.id))
 const items = computed(() => profile.value?.Destinations || profile.value?.destinations || [])
-watch(() => route.params.username, async (username) => {
+watch(() => route.params.username, async (username, previous, onCleanup) => {
+  let cancelled = false
+  onCleanup(() => { cancelled = true })
   loading.value = true
   profile.value = null
   errorMessage.value = ''
-  try { profile.value = (await getPublicProfile(username)).data }
-  catch (error) { errorMessage.value = error.message }
-  finally { loading.value = false }
+  try { const response = await getPublicProfile(username); if (!cancelled) profile.value = response.data }
+  catch (error) { if (!cancelled) errorMessage.value = error.message }
+  finally { if (!cancelled) loading.value = false }
 }, { immediate: true })
 </script>
 
@@ -33,9 +36,13 @@ watch(() => route.params.username, async (username) => {
         <div class="flex-grow-1"><p class="eyebrow mb-1">PERFIL DE VIAJANTE</p><h1 class="h2 mb-1">{{ profile.fullName || profile.username }}</h1><p class="text-muted mb-2">@{{ profile.username }}</p><p v-if="profile.bio" class="mb-0">{{ profile.bio }}</p></div>
         <div class="profile-actions">
           <RouterLink v-if="isOwnProfile" class="btn btn-outline-success" :to="{ name: 'my-profile' }">Editar Perfil</RouterLink>
-          <button v-else-if="isAuthenticated" class="btn btn-primary" type="button">Seguir</button>
+          <FollowButton v-else :key="profile.id" :user-id="profile.id" v-model:following="profile.isFollowing" v-model:followers-count="profile.followersCount" />
         </div>
       </header>
+      <nav class="d-flex gap-4 mb-4" aria-label="Estatísticas do perfil">
+        <RouterLink :to="{ name: 'profile-followers', params: { username: profile.username } }"><strong>{{ profile.followersCount }}</strong> Seguidores</RouterLink>
+        <RouterLink :to="{ name: 'profile-following', params: { username: profile.username } }"><strong>{{ profile.followingCount }}</strong> Seguindo</RouterLink>
+      </nav>
       <div class="section-heading"><div><p class="eyebrow">ROTEIROS COMPARTILHADOS</p><h2>Destinos de {{ profile.username }}</h2></div><span class="count-pill">{{ items.length }} {{ items.length === 1 ? 'destino' : 'destinos' }}</span></div>
       <div v-if="items.length" class="row g-4">
         <div v-for="destination in items" :key="destination.id" class="col-12 col-sm-6 col-xl-4"><DestinationCard :destination="{ ...destination, User: { username: profile.username, profilePicture: profile.profilePicture } }" /></div>

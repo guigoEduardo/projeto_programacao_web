@@ -19,6 +19,7 @@ const loading = ref(true)
 const saving = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const profile = ref(null)
 const bioError = ref('')
 
 const bioHint = computed(() => `${bio.value.length}/${BIO_MAX}`)
@@ -26,6 +27,7 @@ const bioHint = computed(() => `${bio.value.length}/${BIO_MAX}`)
 onMounted(async () => {
   try {
     const response = await getMyProfile()
+    profile.value = response.data
     fullName.value = response.data.fullName
     bio.value = response.data.bio || ''
     profilePicture.value = response.data.profilePicture
@@ -92,6 +94,10 @@ async function handleSubmit() {
 <template>
   <div class="p-4" style="max-width: 480px;">
     <h1 class="mb-4">Meu Perfil</h1>
+    <nav v-if="profile" class="d-flex gap-3 mb-4" aria-label="Estatísticas do perfil">
+      <RouterLink :to="{ name: 'profile-followers', params: { username: profile.username } }">{{ profile.followersCount }} Seguidores</RouterLink>
+      <RouterLink :to="{ name: 'profile-following', params: { username: profile.username } }">{{ profile.followingCount }} Seguindo</RouterLink>
+    </nav>
 
     <div v-if="loading">Carregando...</div>
 

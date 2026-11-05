@@ -10,6 +10,7 @@ exports.register = async (req, res) => {
 
 exports.getPublicProfile = async (req, res) => {
   const user = await userService.getPublicProfile(req.params.username, req.user?.id);
+  user.isFollowing = Boolean(req.user && !user.isOwner && await require('../follow/followService').getFollowStatus(req.user.id, user.id));
   return success(res, user);
 };
 

@@ -14,6 +14,8 @@ const routes = [
   { path: '/curtidos', name: 'liked-destinations', component: () => import('../views/LikedDestinationsView.vue'), meta: { requiresAuth: true } },
   { path: '/perfil', name: 'my-profile', component: () => import('../views/profile/MyProfileView.vue'), meta: { requiresAuth: true } },
   { path: '/perfil/:username', name: 'public-profile', component: () => import('../views/profile/PublicProfileView.vue') },
+  { path: '/perfil/:username/seguidores', name: 'profile-followers', component: () => import('../views/profile/FollowListView.vue'), props: { kind: 'followers' } },
+  { path: '/perfil/:username/seguindo', name: 'profile-following', component: () => import('../views/profile/FollowListView.vue'), props: { kind: 'following' } },
   { path: '/favoritos', name: 'favorites', component: () => import('../views/MyFavoritesView.vue'), meta: { requiresAuth: true } },
   { path: '/roteiros', name: 'itineraries', component: () => import('../views/MyItinerariesView.vue'), meta: { requiresAuth: true } },
   { path: '/busca', name: 'search', component: () => import('../views/SearchView.vue') },
@@ -33,11 +35,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const { isAuthenticated, isAdmin } = useAuth()
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
     return next({ name: 'login', query: { redirect: to.fullPath } })
   }
 
-  if (to.meta.requiresAdmin && !isAdmin) {
+  if (to.meta.requiresAdmin && !isAdmin.value) {
     return next({ name: 'feed' })
   }
 

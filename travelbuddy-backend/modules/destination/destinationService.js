@@ -2,6 +2,8 @@ const Destination = require('./destinationModel');
 const User = require('../user/userModel');
 const Like = require('../like/likeModel');
 const Comment = require('../comment/commentModel');
+const Follow = require('../follow/followModel');
+const { Op } = require('sequelize');
 const fs = require('fs/promises');
 const path = require('path');
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'destinations');
@@ -87,6 +89,19 @@ async function getMyDestinations(userId) {
   return Destination.findAll({ where: { userId }, include: [{ model: User, attributes: ['id', 'username', 'fullName', 'profilePicture'] }], order: [['createdAt', 'DESC']] });
 }
 
+async function getFollowingDestinations(userId, page = 1, limit = 12) {
+  const follows = await Follow.findAll({ where: { followerId: userId }, attributes: ['followingId'] });
+  const followedIds = follows.map(follow => Number(follow.followingId));
+  if (!followedIds.length) return [];
+  return Destination.findAll({
+    where: { userId: { [Op.in]: followedIds } },
+    include: [{ model: User, attributes: ['id', 'username', 'fullName', 'profilePicture'] }],
+    order: [['createdAt', 'DESC'], ['id', 'DESC']],
+    offset: (page - 1) * limit,
+    limit
+  });
+}
+
 async function getDestinationForEdit(id, userId) {
   return findOwnedDestination(id, userId);
 }
@@ -116,4 +131,4 @@ async function deleteDestination(id, userId) {
   return destination.id;
 }
 
-module.exports = { createDestination, getDestinationDetails, getFeedDestinations, getMyDestinations, getDestinationForEdit, updateDestination, deleteDestination, removeFile };
+module.exports = { createDestination, getDestinationDetails, getFeedDestinations, getFollowingDestinations, getMyDestinations, getDestinationForEdit, updateDestination, deleteDestination, removeFile };

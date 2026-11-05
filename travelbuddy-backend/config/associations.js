@@ -2,6 +2,10 @@ const User = require('../modules/user/userModel');
 const Destination = require('../modules/destination/destinationModel');
 const Like = require('../modules/like/likeModel');
 const Comment = require('../modules/comment/commentModel');
+const Follow = require('../modules/follow/followModel');
+
+Follow.belongsTo(User, { as: 'Follower', foreignKey: 'followerId' });
+Follow.belongsTo(User, { as: 'Following', foreignKey: 'followingId' });
 
 User.hasMany(Destination, { foreignKey: 'userId' });
 Destination.belongsTo(User, { foreignKey: 'userId' });

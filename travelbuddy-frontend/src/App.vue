@@ -1,6 +1,7 @@
 <template>
   <div class="app-layout">
     <TheNavbar />
+    <TheSidebar />
     <div class="app-body">
       <main class="app-content">
         <router-view />
@@ -13,6 +14,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import TheNavbar from './components/layout/TheNavbar.vue'
+import TheSidebar from './components/layout/TheSidebar.vue'
 import TheFooter from './components/layout/TheFooter.vue'
 import { useAuthStore } from './stores/auth'
 
