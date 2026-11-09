@@ -89,7 +89,7 @@ async function getMyDestinations(userId) {
   return Destination.findAll({ where: { userId }, include: [{ model: User, attributes: ['id', 'username', 'fullName', 'profilePicture'] }], order: [['createdAt', 'DESC']] });
 }
 
-async function getFollowingDestinations(userId, page = 1, limit = 12) {
+async function getFollowingDestinations(userId, page, limit) {
   const follows = await Follow.findAll({ where: { followerId: userId }, attributes: ['followingId'] });
   const followedIds = follows.map(follow => Number(follow.followingId));
   if (!followedIds.length) return [];

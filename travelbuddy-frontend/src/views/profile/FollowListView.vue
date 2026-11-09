@@ -1,35 +1,22 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getPublicProfile } from '../../services/authService'
 import { getFollowers, getFollowing } from '../../services/followService'
 import { getProfilePictureUrl } from '../../utils/media'
+import { useAsyncData } from '../../composables/useAsyncData'
 
 const props = defineProps({ kind: { type: String, required: true } })
 const route = useRoute()
-const profile = ref(null)
-const people = ref([])
-const loading = ref(true)
-const errorMessage = ref('')
-let requestId = 0
+const { data: list, loading, errorMessage, execute } = useAsyncData(async (kind, username, signal) => {
+  const profileResponse = await getPublicProfile(username, signal)
+  const listResponse = await (kind === 'followers' ? getFollowers : getFollowing)(profileResponse.data.id, signal)
+  return { profile: profileResponse.data, people: listResponse.data }
+}, { immediate: false })
+const profile = computed(() => list.value?.profile || null)
+const people = computed(() => list.value?.people || [])
 async function loadList() {
-  const currentRequest = ++requestId
-  const kind = props.kind
-  loading.value = true
-  errorMessage.value = ''
-  profile.value = null
-  people.value = []
-  try {
-    const response = await getPublicProfile(route.params.username)
-    if (currentRequest !== requestId) return
-    profile.value = response.data
-    const list = await (kind === 'followers' ? getFollowers : getFollowing)(response.data.id)
-    if (currentRequest === requestId) people.value = list.data
-  } catch (error) {
-    if (currentRequest === requestId) errorMessage.value = error.message
-  } finally {
-    if (currentRequest === requestId) loading.value = false
-  }
+  try { await execute(props.kind, route.params.username) } catch {}
 }
 watch(() => [props.kind, route.params.username], loadList, { immediate: true })
 </script>

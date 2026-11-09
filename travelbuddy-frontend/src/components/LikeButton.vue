@@ -3,12 +3,13 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { toggleDestinationLike } from '../services/likeService'
+import { useAuthenticatedAction } from '../composables/useAuthenticatedAction'
 
 const props = defineProps({ destinationId: { type: [Number, String], required: true }, modelValue: { type: Boolean, default: false }, count: { type: Number, default: 0 } })
-const emit = defineEmits(['update:modelValue', 'update:count', 'error'])
+const emit = defineEmits(['update:modelValue', 'update:count'])
 const router = useRouter()
 const { isAuthenticated } = useAuth()
-const isBusy = ref(false)
+const { isBusy, run } = useAuthenticatedAction()
 watch(() => props.modelValue, (value) => { liked.value = value })
 watch(() => props.count, (value) => { likesCount.value = value })
 const liked = ref(props.modelValue)
@@ -26,20 +27,19 @@ async function toggle() {
   likesCount.value = Math.max(0, previousCount + (liked.value ? 1 : -1))
   emit('update:modelValue', liked.value)
   emit('update:count', likesCount.value)
-  isBusy.value = true
   try {
-    const response = await toggleDestinationLike(props.destinationId)
+    const response = await run(() => toggleDestinationLike(props.destinationId), { successMessage: liked.value ? 'Destino curtido.' : 'Curtida removida.' })
+    if (!response) throw new Error('A curtida não foi atualizada.')
     liked.value = response.data.liked
     likesCount.value = response.data.likesCount
     emit('update:modelValue', liked.value)
     emit('update:count', likesCount.value)
-  } catch (error) {
+  } catch {
     liked.value = previousLiked
     likesCount.value = previousCount
     emit('update:modelValue', liked.value)
     emit('update:count', likesCount.value)
-    emit('error', error.message || 'Não foi possível atualizar a curtida.')
-  } finally { isBusy.value = false }
+  }
 }
 </script>
 

@@ -9,6 +9,8 @@
  */
 
 import axios from 'axios'
+import { STORAGE_KEYS } from '../config/constants'
+import { useToast } from '../composables/useToast'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -18,7 +20,7 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem(STORAGE_KEYS.TOKEN)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -32,28 +34,34 @@ api.interceptors.response.use(
       const apiError = error.response.data
 
       if (error.response.status === 401) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
+        localStorage.removeItem(STORAGE_KEYS.TOKEN)
+        localStorage.removeItem(STORAGE_KEYS.USER)
         window.location.href = '/login'
       }
 
-      return Promise.reject({
+      const normalizedError = {
         message: apiError.message || 'Ocorreu um erro na requisição.',
         errors: apiError.errors || [],
         status: error.response.status,
-      })
+      }
+      if (!error.config?.silent) useToast().error(normalizedError.message)
+      return Promise.reject(normalizedError)
     } else if (error.request) {
-      return Promise.reject({
+      const normalizedError = {
         message: 'Não foi possível se conectar ao servidor. Verifique sua conexão ou tente novamente.',
         errors: [],
         status: null,
-      })
+      }
+      if (!error.config?.silent) useToast().error(normalizedError.message)
+      return Promise.reject(normalizedError)
     } else {
-      return Promise.reject({
+      const normalizedError = {
         message: 'Erro inesperado ao preparar a requisição.',
         errors: [],
         status: null,
-      })
+      }
+      if (!error.config?.silent) useToast().error(normalizedError.message)
+      return Promise.reject(normalizedError)
     }
   }
 )

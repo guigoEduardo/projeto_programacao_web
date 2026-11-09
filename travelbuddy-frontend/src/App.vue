@@ -8,6 +8,7 @@
       </main>
     </div>
     <TheFooter />
+    <ToastContainer />
   </div>
 </template>
 
@@ -16,6 +17,7 @@ import { onMounted } from 'vue'
 import TheNavbar from './components/layout/TheNavbar.vue'
 import TheSidebar from './components/layout/TheSidebar.vue'
 import TheFooter from './components/layout/TheFooter.vue'
+import ToastContainer from './components/base/ToastContainer.vue'
 import { useAuthStore } from './stores/auth'
 
 const authStore = useAuthStore()

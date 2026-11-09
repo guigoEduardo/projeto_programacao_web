@@ -31,6 +31,7 @@ defineProps({
       :type="type"
       class="form-control"
       :class="{ 'is-invalid': error }"
+      :maxlength="maxlength"
     />
     <div v-if="hint" class="form-text text-muted">{{ hint }}</div>
     <div v-if="error" class="invalid-feedback">{{ error }}</div>

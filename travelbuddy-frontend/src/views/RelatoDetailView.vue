@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getDestinationById } from '../services/destinationService'
 import { getDestinationImageUrl, getProfilePictureUrl } from '../utils/media'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from '../components/CommentSection.vue'
+import { useAsyncData } from '../composables/useAsyncData'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,9 +13,10 @@ const router = useRouter()
 const destination = ref(null)
 const isOwner = ref(false)
 const isLiked = ref(false)
-const likeError = ref('')
-const loading = ref(true)
-const errorMessage = ref('')
+const { loading, errorMessage, execute } = useAsyncData(async (id, signal) => {
+  const response = await getDestinationById(id, signal)
+  return response.data
+}, { immediate: false })
 
 const imageUrl = computed(() =>
   destination.value ? getDestinationImageUrl(destination.value.image) : ''
@@ -32,26 +34,23 @@ async function editDestination() {
   await router.push({ name: 'relato-edit', params: { id: destination.value.id } })
 }
 
-onMounted(async () => {
+watch(() => route.params.id, async id => {
   try {
-    const response = await getDestinationById(route.params.id)
-    destination.value = response.data.destination
-    isOwner.value = response.data.isOwner
-    isLiked.value = response.data.isLiked
-  } catch (err) {
-    errorMessage.value = err.message
-  } finally {
-    loading.value = false
-  }
-})
+    const response = await execute(id)
+    destination.value = response.destination
+    isOwner.value = response.isOwner
+    isLiked.value = response.isLiked
+  } catch {}
+}, { immediate: true })
 </script>
 
 <template>
   <div class="container py-4">
     <p v-if="loading" class="text-muted">Carregando...</p>
 
-    <div v-else-if="errorMessage" class="alert alert-danger">
+    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
       {{ errorMessage }}
+      <button class="btn btn-link" @click="execute(route.params.id).catch(() => {})">Tentar novamente</button>
       <router-link :to="{ name: 'feed' }" class="alert-link ms-2">Voltar ao feed</router-link>
     </div>
 
@@ -80,8 +79,7 @@ onMounted(async () => {
             · {{ destination.viewsCount }} visualizações
           </span>
         </div>
-        <div class="detail-actions mt-3"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" @update:model-value="likeError = ''" @error="likeError = $event" /></div>
-        <p v-if="likeError" class="alert alert-danger py-2 mt-2 mb-0" role="alert">{{ likeError }}</p>
+        <div class="detail-actions mt-3"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" /></div>
         <CommentSection :destination-id="destination.id" v-model:count="destination.commentsCount" />
       </div>
     </div>

@@ -78,6 +78,12 @@ a { color: var(--brand-color); }
 .profile-actions { margin-left: auto; }
 .empty-state { display: flex; min-height: 240px; flex-direction: column; align-items: center; justify-content: center; padding: 32px; border: 1px dashed #d4e1d7; border-radius: 18px; background: rgba(255,255,255,.72); text-align: center; }
 .empty-state > i { margin-bottom: 12px; color: #77a887; font-size: 2rem; }
+.toast-container { position: fixed; z-index: 2100; top: 84px; right: 24px; display: grid; width: min(380px, calc(100vw - 32px)); gap: 10px; pointer-events: none; }
+.app-toast { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid #cfe3d3; border-left: 5px solid var(--brand-color); border-radius: 12px; color: var(--ink); background: #fff; box-shadow: 0 10px 32px rgba(26, 52, 35, .2); pointer-events: auto; animation: toast-enter .18s ease-out; }
+.app-toast--success { border-left-color: #2e8b57; }
+.app-toast--error { border-color: #f1c4c8; border-left-color: #c83f57; }
+.app-toast--error::before { content: ' '; }
+@keyframes toast-enter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 .empty-state h2, .empty-state h3 { font-size: 1.2rem; font-weight: 700; }
 .empty-state p { color: var(--muted); }
 .empty-state.compact { min-height: 150px; }
@@ -85,7 +91,7 @@ a { color: var(--brand-color); }
 .editor-card h1 { font-weight: 750; letter-spacing: -.03em; }
 .edit-image-preview { display: block; width: 100%; max-height: 360px; border-radius: 12px; object-fit: cover; background: var(--page-bg); }
 .confirmation-modal { width: min(100%, 480px); padding: 24px; border: 1px solid #e8eee9; border-radius: 17px; background: white; box-shadow: 0 24px 70px rgba(18, 35, 24, .24); }
-.modal-backdrop-custom { position: fixed; z-index: 2000; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(21, 37, 27, .48); backdrop-filter: blur(3px); }
+.modal-backdrop-custom { position: fixed; z-index: 1500; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(21, 37, 27, .48); backdrop-filter: blur(3px); }
 body.modal-open { overflow: hidden; }
 
 @media (max-width: 700px) {

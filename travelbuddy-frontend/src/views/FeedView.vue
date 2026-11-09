@@ -1,43 +1,20 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { getFeed } from '../services/destinationService'
 import DestinationCard from '../components/DestinationCard.vue'
 import BaseButton from '../components/base/BaseButton.vue'
+import { usePaginatedList } from '../composables/usePaginatedList'
+import { PAGINATION } from '../config/constants'
 
-const LIMIT = 12
-
-const destinations = ref([])
-const page = ref(1)
-const hasMore = ref(true)
-const loading = ref(false)
-const errorMessage = ref('')
-
-async function loadPage() {
-  loading.value = true
-  errorMessage.value = ''
-
-  try {
-    const response = await getFeed(page.value, LIMIT)
-    const items = response.data
-
-    destinations.value.push(...items)
-    hasMore.value = items.length === LIMIT
-    page.value += 1
-  } catch (err) {
-    errorMessage.value = err.message
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(loadPage)
+const { items: destinations, hasMore, loading, errorMessage, loadMore } = usePaginatedList(getFeed, { limit: PAGINATION.DEFAULT_LIMIT })
+onMounted(loadMore)
 </script>
 
 <template>
   <div class="container py-4">
     <h2 class="mb-4">Feed</h2>
 
-    <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }} <button class="btn btn-outline-danger btn-sm" :disabled="loading" @click="loadMore">Tentar novamente</button></div>
 
     <p v-if="!loading && !errorMessage && destinations.length === 0" class="text-muted">
       Nenhum destino publicado ainda.
@@ -51,7 +28,7 @@ onMounted(loadPage)
 
     <div class="text-center mt-4">
       <p v-if="loading" class="text-muted">Carregando...</p>
-      <BaseButton v-else-if="hasMore && destinations.length > 0" @click="loadPage">
+      <BaseButton v-else-if="hasMore && destinations.length > 0" @click="loadMore">
         Carregar mais
       </BaseButton>
     </div>

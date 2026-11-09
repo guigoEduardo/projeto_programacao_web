@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
+const { VALIDATION } = require('../../config/constants');
 
 const User = sequelize.define('User',
   {
@@ -8,7 +9,7 @@ const User = sequelize.define('User',
     email: { type: DataTypes.STRING, allowNull: false, unique: 'idx_unique_email', validate: { isEmail: true } },
     password: { type: DataTypes.STRING, allowNull: false },
     fullName: { type: DataTypes.STRING, allowNull: true },
-    bio: { type: DataTypes.STRING(255), allowNull: true },
+    bio: { type: DataTypes.STRING(VALIDATION.BIO_MAX), allowNull: true },
     profilePicture: { type: DataTypes.STRING, allowNull: true, defaultValue: 'default-profile.png' },
     followersCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     followingCount: { type: DataTypes.INTEGER, defaultValue: 0 },

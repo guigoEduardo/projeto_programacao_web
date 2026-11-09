@@ -4,32 +4,31 @@ import { useAuth } from '../composables/useAuth'
 import { createDestinationComment, getDestinationComments } from '../services/commentService'
 import { formatDate } from '../utils/format'
 import { getProfilePictureUrl } from '../utils/media'
+import { VALIDATION } from '../config/constants'
+import { useAsyncData } from '../composables/useAsyncData'
 
 const props = defineProps({ destinationId: { type: [Number, String], required: true }, initialCount: { type: Number, default: 0 } })
 const emit = defineEmits(['update:count'])
 const { isAuthenticated } = useAuth()
-const comments = ref([])
+const { data: comments, loading, errorMessage, execute } = useAsyncData(
+  async signal => (await getDestinationComments(props.destinationId, signal)).data,
+  { immediate: false, initialValue: [] },
+)
 const content = ref('')
-const loading = ref(true)
 const submitting = ref(false)
-const errorMessage = ref('')
 const validationMessage = ref('')
 
 async function loadComments() {
-  loading.value = true
-  errorMessage.value = ''
   try {
-    const response = await getDestinationComments(props.destinationId)
-    comments.value = response.data
+    await execute()
     emit('update:count', comments.value.length)
-  } catch (error) { errorMessage.value = error.message || 'Não foi possível carregar os comentários.' }
-  finally { loading.value = false }
+  } catch {}
 }
 
 async function submitComment() {
   const trimmed = content.value.trim()
   if (!trimmed) { validationMessage.value = 'Escreva um comentário antes de publicar.'; return }
-  if (trimmed.length > 500) { validationMessage.value = 'O comentário deve ter no máximo 500 caracteres.'; return }
+  if (trimmed.length > VALIDATION.COMMENT_MAX) { validationMessage.value = `O comentário deve ter no máximo ${VALIDATION.COMMENT_MAX} caracteres.`; return }
   validationMessage.value = ''
   submitting.value = true
   try {
@@ -37,7 +36,7 @@ async function submitComment() {
     comments.value.unshift(response.data)
     content.value = ''
     emit('update:count', comments.value.length)
-  } catch (error) { validationMessage.value = error.message || 'Não foi possível publicar o comentário.' }
+  } catch {}
   finally { submitting.value = false }
 }
 
@@ -49,8 +48,8 @@ onMounted(loadComments)
     <h2 id="comments-heading" class="h4 mb-3">Comentários <span class="count-pill">{{ comments.length }}</span></h2>
     <form v-if="isAuthenticated" class="comment-form mb-4" @submit.prevent="submitComment">
       <label class="visually-hidden" for="new-comment">Escreva um comentário</label>
-      <textarea id="new-comment" v-model="content" class="form-control" rows="3" maxlength="500" placeholder="Compartilhe sua experiência..." />
-      <div class="d-flex justify-content-between align-items-center mt-2"><span class="small text-muted">{{ content.trim().length }}/500</span><button class="btn btn-primary" type="submit" :disabled="submitting">{{ submitting ? 'Publicando...' : 'Comentar' }}</button></div>
+      <textarea id="new-comment" v-model="content" class="form-control" rows="3" :maxlength="VALIDATION.COMMENT_MAX" placeholder="Compartilhe sua experiência..." />
+      <div class="d-flex justify-content-between align-items-center mt-2"><span class="small text-muted">{{ content.trim().length }}/{{ VALIDATION.COMMENT_MAX }}</span><button class="btn btn-primary" type="submit" :disabled="submitting">{{ submitting ? 'Publicando...' : 'Comentar' }}</button></div>
       <p v-if="validationMessage" class="text-danger small mt-2 mb-0" role="alert">{{ validationMessage }}</p>
     </form>
     <p v-else class="text-muted">Entre para participar da conversa.</p>

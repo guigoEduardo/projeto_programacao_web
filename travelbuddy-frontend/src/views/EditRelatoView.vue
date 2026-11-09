@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getDestinationForEdit, updateDestination } from '../services/destinationService'
 import { getDestinationImageUrl, getLocalPreviewUrl } from '../utils/media'
 import BaseButton from '../components/base/BaseButton.vue'
+import { VALIDATION } from '../config/constants'
 
 const route = useRoute()
 const router = useRouter()
@@ -55,10 +56,10 @@ async function submit() {
       <p class="eyebrow">SUA PUBLICAÇÃO</p><h1>Editar destino</h1><p class="text-muted mb-4">Atualize os detalhes ou escolha outra imagem.</p>
       <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
       <label class="form-label" for="destination-title">Título</label>
-      <input id="destination-title" v-model="form.title" maxlength="100" class="form-control mb-1" :class="{ 'is-invalid': fieldError }" />
+      <input id="destination-title" v-model="form.title" :maxlength="VALIDATION.TITLE_MAX" class="form-control mb-1" :class="{ 'is-invalid': fieldError }" />
       <div v-if="fieldError" class="invalid-feedback d-block mb-3">{{ fieldError }}</div>
       <label class="form-label mt-3" for="destination-description">Descrição</label>
-      <textarea id="destination-description" v-model="form.description" maxlength="500" rows="4" class="form-control" />
+      <textarea id="destination-description" v-model="form.description" :maxlength="VALIDATION.DESCRIPTION_MAX" rows="4" class="form-control" />
       <label class="form-label mt-3" for="destination-category">Categoria</label>
       <select id="destination-category" v-model="form.category" class="form-select">
         <option v-for="category in categories" :key="category" :value="category">{{ category[0].toUpperCase() + category.slice(1) }}</option>

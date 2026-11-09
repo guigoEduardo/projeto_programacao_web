@@ -5,18 +5,16 @@ import { deleteDestination, getMyDestinations } from '../services/destinationSer
 import DestinationCard from '../components/DestinationCard.vue'
 import BaseModal from '../components/base/BaseModal.vue'
 import BaseButton from '../components/base/BaseButton.vue'
+import { useToast } from '../composables/useToast'
+import { useAsyncData } from '../composables/useAsyncData'
 
-const destinations = ref([])
-const loading = ref(true)
+const { data: destinations, loading, errorMessage, execute } = useAsyncData(getMyDestinations, { immediate: false, initialValue: [] })
 const deleting = ref(false)
-const errorMessage = ref('')
 const modalOpen = ref(false)
 const selected = ref(null)
+const toast = useToast()
 async function load() {
-  loading.value = true
-  try { destinations.value = (await getMyDestinations()).data }
-  catch (error) { errorMessage.value = error.message }
-  finally { loading.value = false }
+  try { await execute() } catch {}
 }
 function askDelete(item) { selected.value = item; modalOpen.value = true }
 async function confirmDelete() {
@@ -26,6 +24,7 @@ async function confirmDelete() {
   try {
     await deleteDestination(selected.value.id)
     destinations.value = destinations.value.filter(item => item.id !== selected.value.id)
+    toast.success('Destino excluído com sucesso.')
     modalOpen.value = false
     selected.value = null
   } catch (error) { errorMessage.value = error.message }

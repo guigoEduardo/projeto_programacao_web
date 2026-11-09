@@ -5,10 +5,10 @@ import { useAuthStore } from '../../stores/auth'
 import { getProfilePictureUrl, getLocalPreviewUrl } from '../../utils/media'
 import BaseInput from '../../components/base/BaseInput.vue'
 import BaseButton from '../../components/base/BaseButton.vue'
+import { VALIDATION } from '../../config/constants'
 
 const authStore = useAuthStore()
 
-const BIO_MAX = 255
 
 const fullName = ref('')
 const bio = ref('')
@@ -22,7 +22,7 @@ const successMessage = ref('')
 const profile = ref(null)
 const bioError = ref('')
 
-const bioHint = computed(() => `${bio.value.length}/${BIO_MAX}`)
+const bioHint = computed(() => `${bio.value.length}/${VALIDATION.BIO_MAX}`)
 
 onMounted(async () => {
   try {
@@ -52,8 +52,8 @@ function validate() {
     errorMessage.value = 'O nome completo não pode ficar vazio.'
     return false
   }
-  if (bio.value.length > BIO_MAX) {
-    bioError.value = `A bio deve ter no máximo ${BIO_MAX} caracteres.`
+  if (bio.value.length > VALIDATION.BIO_MAX) {
+    bioError.value = `A bio deve ter no máximo ${VALIDATION.BIO_MAX} caracteres.`
     return false
   }
   return true
@@ -120,7 +120,7 @@ async function handleSubmit() {
       </div>
 
       <BaseInput id="fullName" label="Nome completo" v-model="fullName" />
-      <BaseInput id="bio" label="Bio" v-model="bio" :rows="3" :hint="bioHint" :error="bioError" :maxlength="BIO_MAX" />
+      <BaseInput id="bio" label="Bio" v-model="bio" :rows="3" :hint="bioHint" :error="bioError" :maxlength="VALIDATION.BIO_MAX" />
 
       <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
       <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>

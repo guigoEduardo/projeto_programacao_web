@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { toggleFollow } from '../services/followService'
+import { useAuthenticatedAction } from '../composables/useAuthenticatedAction'
 
 const props = defineProps({ userId: { type: Number, required: true } })
 const following = defineModel('following', { type: Boolean, required: true })
@@ -10,8 +11,7 @@ const followersCount = defineModel('followersCount', { type: Number, required: t
 const { isAuthenticated } = useAuth()
 const router = useRouter()
 const route = useRoute()
-const isBusy = ref(false)
-const errorMessage = ref('')
+const { isBusy, run } = useAuthenticatedAction()
 
 async function toggle() {
   if (!isAuthenticated.value) {
@@ -22,19 +22,17 @@ async function toggle() {
   const previousFollowing = following.value
   const previousCount = followersCount.value
   const nowFollowing = !previousFollowing
-  errorMessage.value = ''
-  isBusy.value = true
   following.value = nowFollowing
   followersCount.value = Math.max(0, previousCount + (nowFollowing ? 1 : -1))
   try {
-    const response = await toggleFollow(props.userId)
+    const response = await run(() => toggleFollow(props.userId), { successMessage: nowFollowing ? 'Você começou a seguir esta pessoa.' : 'Você deixou de seguir esta pessoa.' })
+    if (!response) throw new Error('A ação não foi concluída.')
     following.value = response.data.isFollowing
     followersCount.value = response.data.followersCount
   } catch (error) {
     following.value = previousFollowing
     followersCount.value = previousCount
-    errorMessage.value = error.message || 'Não foi possível atualizar. A alteração foi desfeita.'
-  } finally { isBusy.value = false }
+  }
 }
 </script>
 
@@ -44,6 +42,5 @@ async function toggle() {
       <i :class="following ? 'bi bi-person-check' : 'bi bi-person-plus'" aria-hidden="true" />
       {{ following ? 'Seguindo' : 'Seguir' }}
     </button>
-    <p v-if="errorMessage" class="alert alert-danger mt-2 mb-0" role="alert">{{ errorMessage }}</p>
   </div>
 </template>

@@ -595,3 +595,22 @@ Itens de streaming (rota /stream, Range, 206) não se aplicam: projeto Grupo B, 
 - [x] GuilhermeGoncalves-TravelBuddy-backend.zip gerado sem node_modules/dist e incluindo o módulo follow.
 - [x] GuilhermeGoncalves-TravelBuddy-frontend.zip gerado sem node_modules/dist e incluindo código, respostas, checklist e os 35 JPGs da Atividade 11.
 
+
+## Atividade 12
+
+### Backend e integração
+
+- [x] Constantes de paginação e validação centralizadas; parser compartilhado com página padrão 1, limite padrão 12 e máximo 50.
+- [x] IDs inválidos rejeitados com HTTP 400 nos endpoints de destino, comentários e curtidas.
+- [x] Criação de destino e incremento de contador mantidos atomicamente na transação Sequelize.
+- [x] Respostas reais de perfil/feed/seguir/listas/curtidas/comentários/itens capturadas em `atividade12/api-01` a `api-11`.
+
+### Frontend e evidências
+
+- [x] Toasts globais com limite e duração; erros de formulários permanecem inline; ações não duplicam mensagens.
+- [x] `useAsyncData` cancela chamadas obsoletas e impede respostas antigas de substituir estado atual.
+- [x] Paginação dos feeds geral e seguido reutiliza o helper compartilhado.
+- [x] Playwright verificou erro e rollback, exclusão com toast de sucesso, toast acima do modal, login inválido sem toast e uma chamada em três cliques no Slow 3G.
+- [x] `atividade12/respostas.md` e `atividade12/checkpoint.md` preenchidos.
+- [x] Build de produção frontend concluído.
+- [x] ZIPs da Atividade 12 criados sem `node_modules`, `dist`, `.env` ou dados temporários.

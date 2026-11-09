@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { login as loginRequest, logout as logoutRequest, getMyProfile } from '../services/authService'
+import { STORAGE_KEYS } from '../config/constants'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user')) || null,
+    token: localStorage.getItem(STORAGE_KEYS.TOKEN) || null,
+    user: JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null,
   }),
 
   getters: {
@@ -17,8 +18,8 @@ export const useAuthStore = defineStore('auth', {
       const response = await loginRequest({ email, password })
       this.token = response.data.token
       this.user = response.data.user
-      localStorage.setItem('token', this.token)
-      localStorage.setItem('user', JSON.stringify(this.user))
+      localStorage.setItem(STORAGE_KEYS.TOKEN, this.token)
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(this.user))
     },
 
     async logout() {
@@ -34,7 +35,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await getMyProfile()
         this.user = { ...this.user, ...response.data }
-        localStorage.setItem('user', JSON.stringify(this.user))
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(this.user))
       } catch (err) {
         this.clearSession()
       }
@@ -43,8 +44,8 @@ export const useAuthStore = defineStore('auth', {
     clearSession() {
       this.token = null
       this.user = null
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
+      localStorage.removeItem(STORAGE_KEYS.TOKEN)
+      localStorage.removeItem(STORAGE_KEYS.USER)
     },
   },
 })

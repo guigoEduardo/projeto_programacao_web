@@ -34,6 +34,7 @@ exports.registerValidator = [
     }),
   body('fullName')
     .notEmpty().withMessage('O nome completo é obrigatório.')
+    .isLength({ max: VALIDATION.FULL_NAME_MAX }).withMessage(`O nome completo deve ter no máximo ${VALIDATION.FULL_NAME_MAX} caracteres.`)
     .trim(),
   validate
 ];

@@ -1,6 +1,7 @@
 const userService = require('./userService');
 const destinationService = require('../destination/destinationService');
 const { success } = require('../../middlewares/apiResponse');
+const { parsePagination } = require('../../utils/pagination');
 
 exports.register = async (req, res) => {
   const { username, email, password, fullName } = req.body;
@@ -36,8 +37,7 @@ exports.updateProfile = async (req, res) => {
 };
 
 exports.getFeed = async (req, res) => {
-  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 12, 1), 50);
+  const { page, limit } = parsePagination(req.query);
   const destinations = await destinationService.getFeedDestinations(page, limit);
   return success(res, destinations);
 };

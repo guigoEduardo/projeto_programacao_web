@@ -6,23 +6,20 @@ import { useAuth } from '../../composables/useAuth'
 import { getProfilePictureUrl } from '../../utils/media'
 import DestinationCard from '../../components/DestinationCard.vue'
 import FollowButton from '../../components/FollowButton.vue'
+import { useAsyncData } from '../../composables/useAsyncData'
 
 const route = useRoute()
 const { user } = useAuth()
 const profile = ref(null)
-const loading = ref(true)
-const errorMessage = ref('')
+const { loading, errorMessage, execute } = useAsyncData(getPublicProfile, { immediate: false })
 const isOwnProfile = computed(() => Boolean(profile.value && user.value?.id === profile.value.id))
 const items = computed(() => profile.value?.Destinations || profile.value?.destinations || [])
 watch(() => route.params.username, async (username, previous, onCleanup) => {
   let cancelled = false
   onCleanup(() => { cancelled = true })
-  loading.value = true
   profile.value = null
-  errorMessage.value = ''
-  try { const response = await getPublicProfile(username); if (!cancelled) profile.value = response.data }
-  catch (error) { if (!cancelled) errorMessage.value = error.message }
-  finally { if (!cancelled) loading.value = false }
+  try { const response = await execute(username); if (!cancelled) profile.value = response.data }
+  catch {}
 }, { immediate: true })
 </script>
 

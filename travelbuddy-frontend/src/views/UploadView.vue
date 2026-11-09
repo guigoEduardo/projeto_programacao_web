@@ -7,13 +7,14 @@
 
     <div class="mb-3">
       <label class="form-label">Título *</label>
-      <input v-model="form.title" type="text" class="form-control" maxlength="100" />
+      <input v-model="form.title" type="text" class="form-control" :maxlength="VALIDATION.TITLE_MAX" />
       <div v-if="fieldErrors.title" class="text-danger small">{{ fieldErrors.title }}</div>
     </div>
 
     <div class="mb-3">
       <label class="form-label">Descrição</label>
-      <textarea v-model="form.description" class="form-control" rows="3" maxlength="500"></textarea>
+      <textarea v-model="form.description" class="form-control" rows="3" :maxlength="VALIDATION.DESCRIPTION_MAX"></textarea>
+      <div v-if="fieldErrors.description" class="text-danger small">{{ fieldErrors.description }}</div>
     </div>
 
     <div class="mb-3">
@@ -56,6 +57,8 @@
 <script setup>
 import { ref } from 'vue'
 import { createDestination } from '../services/destinationService'
+import { VALIDATION } from '../config/constants'
+import { useToast } from '../composables/useToast'
 
 const form = ref({ title: '', description: '', category: '' })
 const imageFile = ref(null)
@@ -65,6 +68,7 @@ const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 const fieldErrors = ref({})
+const toast = useToast()
 
 function onFileChange(event) {
   const file = event.target.files[0]
@@ -78,7 +82,9 @@ async function handleSubmit() {
   errorMessage.value = ''
   fieldErrors.value = {}
 
-  if (!form.value.title) { fieldErrors.value.title = 'O título é obrigatório.'; return }
+  if (!form.value.title.trim()) { fieldErrors.value.title = 'O título é obrigatório.'; return }
+  if (form.value.title.trim().length > VALIDATION.TITLE_MAX) { fieldErrors.value.title = `Use até ${VALIDATION.TITLE_MAX} caracteres.`; return }
+  if (form.value.description.length > VALIDATION.DESCRIPTION_MAX) { fieldErrors.value.description = `Use até ${VALIDATION.DESCRIPTION_MAX} caracteres.`; return }
   if (!form.value.category) { fieldErrors.value.category = 'A categoria é obrigatória.'; return }
   if (!imageFile.value) { fieldErrors.value.image = 'A imagem é obrigatória.'; return }
 
@@ -96,12 +102,13 @@ async function handleSubmit() {
       uploadProgress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total)
     })
     successMessage.value = 'Destino publicado com sucesso!'
+    toast.success(successMessage.value)
     form.value = { title: '', description: '', category: '' }
     imageFile.value = null
     imagePreview.value = null
     uploadProgress.value = 0
   } catch (err) {
-    errorMessage.value = err.response?.data?.message || 'Erro ao publicar destino.'
+    errorMessage.value = err.message || 'Erro ao publicar destino.'
   } finally {
     loading.value = false
   }

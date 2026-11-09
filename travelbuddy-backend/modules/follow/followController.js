@@ -1,13 +1,11 @@
 const service = require('./followService');
 const { getFollowingDestinations } = require('../destination/destinationService');
 const { success } = require('../../middlewares/apiResponse');
+const { parsePagination } = require('../../utils/pagination');
+const { parsePositiveId } = require('../../utils/parsePositiveId');
 
 function parseUserId(value) {
-  const id = Number(value);
-  if (!/^\d+$/.test(value) || !Number.isSafeInteger(id) || id <= 0) {
-    throw Object.assign(new Error('O id do usuário deve ser um inteiro positivo.'), { status: 400 });
-  }
-  return id;
+  return parsePositiveId(value, 'O id do usuário deve ser um inteiro positivo.');
 }
 
 exports.toggle = async (req, res) => {
@@ -18,7 +16,6 @@ exports.status = async (req, res) => success(res, { isFollowing: await service.g
 exports.followers = async (req, res) => success(res, await service.getFollowers(parseUserId(req.params.userId)));
 exports.following = async (req, res) => success(res, await service.getFollowing(parseUserId(req.params.userId)));
 exports.feed = async (req, res) => {
-  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 12, 1), 50);
+  const { page, limit } = parsePagination(req.query);
   return success(res, await getFollowingDestinations(req.user.id, page, limit));
 };
