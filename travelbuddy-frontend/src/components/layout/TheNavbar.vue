@@ -9,6 +9,8 @@ const { isAuthenticated, user, logout } = useAuth()
 const router = useRouter()
 const menuRoot = ref(null)
 const menuOpen = ref(false)
+const searchText = ref('')
+function submitSearch(){ const q=searchText.value.trim(); if(!q)return; router.push({name:'search',query:{q}}); searchText.value='' }
 useClickOutside(menuRoot, () => { menuOpen.value = false })
 async function handleLogout() {
   menuOpen.value = false
@@ -21,6 +23,7 @@ async function handleLogout() {
   <nav class="navbar navbar-expand navbar-dark app-navbar">
     <div class="container-fluid navbar-inner">
       <RouterLink class="navbar-brand" to="/"><span class="brand-mark"><i class="bi bi-compass-fill" /></span>TravelBuddy</RouterLink>
+      <form role="search" class="d-flex gap-1 mx-2" @submit.prevent="submitSearch"><input v-model="searchText" class="form-control form-control-sm" aria-label="Buscar destinos e pessoas" placeholder="Buscar" /><button class="btn btn-light btn-sm" aria-label="Buscar"><i class="bi bi-search" /></button></form>
       <div class="navbar-nav nav-main">
         <RouterLink class="nav-link" to="/feed">Feed</RouterLink>
         <RouterLink class="nav-link" to="/busca">Busca</RouterLink>
@@ -39,6 +42,7 @@ async function handleLogout() {
           <div v-if="menuOpen" class="avatar-menu-dropdown" role="menu">
             <RouterLink class="avatar-menu-item" :to="{ name: 'my-profile' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-person-gear" />Editar Perfil</RouterLink>
             <RouterLink class="avatar-menu-item" :to="{ name: 'public-profile', params: { username: user?.username } }" role="menuitem" @click="menuOpen = false"><i class="bi bi-person-vcard" />Ver Perfil</RouterLink>
+            <RouterLink class="avatar-menu-item" :to="{ name: 'my-collections' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-collection" />Minhas Cole&#231;&#245;es</RouterLink>
             <RouterLink class="avatar-menu-item" :to="{ name: 'my-relatos' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-images" />Meus Itens</RouterLink>
             <RouterLink class="avatar-menu-item" :to="{ name: 'liked-destinations' }" role="menuitem" @click="menuOpen = false"><i class="bi bi-heart" />Curtidos</RouterLink>
             <div class="dropdown-divider my-2" />

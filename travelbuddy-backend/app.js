@@ -8,6 +8,7 @@ var destinationRoutes = require('./modules/destination/destinationRoutes');
 var likeRoutes = require('./modules/like/likeRoutes');
 var commentRoutes = require('./modules/comment/commentRoutes');
 var followRoutes = require('./modules/follow/followRoutes');
+var collectionRoutes = require('./modules/collection/collectionRoutes');
 var errorHandler = require('./middlewares/errorHandler');
 require('./config/associations');
 require('dotenv').config();
@@ -33,6 +34,7 @@ app.use('/api', destinationRoutes);
 app.use('/api', likeRoutes);
 app.use('/api', commentRoutes);
 app.use('/api', followRoutes);
+app.use('/api', collectionRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

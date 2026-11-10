@@ -9,7 +9,13 @@ export const VALIDATION = Object.freeze({
   DESCRIPTION_MAX: 500,
   COMMENT_MAX: 500,
   FULL_NAME_MAX: 100,
+  COLLECTION_TITLE_MIN: 3,
+  COLLECTION_TITLE_MAX: 100,
+  COLLECTION_DESCRIPTION_MAX: 500,
 })
 
 export const STORAGE_KEYS = Object.freeze({ TOKEN: 'token', USER: 'user' })
 export const TOAST = Object.freeze({ SUCCESS_MS: 4000, ERROR_MS: 6000, MAX_VISIBLE: 4 })
+
+export const SEARCH = Object.freeze({ MIN_LENGTH: 2, DEBOUNCE_MS: 400 })
+export const LIMITS = Object.freeze({ COLLECTION_TITLE_MIN: 3, COLLECTION_TITLE_MAX: 100, COLLECTION_DESCRIPTION_MAX: 500 })

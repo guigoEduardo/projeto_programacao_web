@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { toggleDestinationLike } from '../services/likeService'
 import { useAuthenticatedAction } from '../composables/useAuthenticatedAction'
+import { runOptimistic } from '../utils/optimistic'
 
 const props = defineProps({ destinationId: { type: [Number, String], required: true }, modelValue: { type: Boolean, default: false }, count: { type: Number, default: 0 } })
 const emit = defineEmits(['update:modelValue', 'update:count'])
@@ -23,23 +24,11 @@ async function toggle() {
   if (isBusy.value) return
   const previousLiked = liked.value
   const previousCount = likesCount.value
-  liked.value = !previousLiked
-  likesCount.value = Math.max(0, previousCount + (liked.value ? 1 : -1))
-  emit('update:modelValue', liked.value)
-  emit('update:count', likesCount.value)
-  try {
-    const response = await run(() => toggleDestinationLike(props.destinationId), { successMessage: liked.value ? 'Destino curtido.' : 'Curtida removida.' })
-    if (!response) throw new Error('A curtida não foi atualizada.')
-    liked.value = response.data.liked
-    likesCount.value = response.data.likesCount
-    emit('update:modelValue', liked.value)
-    emit('update:count', likesCount.value)
-  } catch {
-    liked.value = previousLiked
-    likesCount.value = previousCount
-    emit('update:modelValue', liked.value)
-    emit('update:count', likesCount.value)
-  }
+  await run(() => runOptimistic({
+    apply() { liked.value = !previousLiked; likesCount.value = Math.max(0, previousCount + (liked.value ? 1 : -1)); emit('update:modelValue', liked.value); emit('update:count', likesCount.value); return () => { liked.value = previousLiked; likesCount.value = previousCount; emit('update:modelValue', liked.value); emit('update:count', likesCount.value) } },
+    request: () => toggleDestinationLike(props.destinationId),
+    confirm(data) { liked.value = data.liked; likesCount.value = data.likesCount; emit('update:modelValue', liked.value); emit('update:count', likesCount.value) }
+  }), { successMessage: liked.value ? 'Destino curtido.' : 'Curtida removida.' })
 }
 </script>
 

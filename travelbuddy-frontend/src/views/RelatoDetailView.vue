@@ -5,10 +5,14 @@ import { getDestinationById } from '../services/destinationService'
 import { getDestinationImageUrl, getProfilePictureUrl } from '../utils/media'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from '../components/CommentSection.vue'
+import AddToCollectionModal from '../components/collection/AddToCollectionModal.vue'
+import { useAuth } from '../composables/useAuth'
 import { useAsyncData } from '../composables/useAsyncData'
 
 const route = useRoute()
 const router = useRouter()
+const { isAuthenticated } = useAuth()
+const showCollections = ref(false)
 
 const destination = ref(null)
 const isOwner = ref(false)
@@ -29,6 +33,8 @@ const createdAtLabel = computed(() =>
     ? new Date(destination.value.createdAt).toLocaleDateString('pt-BR')
     : ''
 )
+
+function saveDestination() { if (!isAuthenticated.value) { router.push({ name: 'login', query: { redirect: route.fullPath } }); return } showCollections.value = true }
 
 async function editDestination() {
   await router.push({ name: 'relato-edit', params: { id: destination.value.id } })
@@ -79,7 +85,8 @@ watch(() => route.params.id, async id => {
             · {{ destination.viewsCount }} visualizações
           </span>
         </div>
-        <div class="detail-actions mt-3"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" /></div>
+        <div class="detail-actions mt-3 d-flex gap-2 align-items-center"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" /><button type="button" class="btn btn-outline-success" @click="saveDestination"><i class="bi bi-bookmark-plus me-1"/>Salvar</button></div>
+        <AddToCollectionModal v-if="showCollections" :open="showCollections" :destination-id="destination.id" @close="showCollections=false" />
         <CommentSection :destination-id="destination.id" v-model:count="destination.commentsCount" />
       </div>
     </div>

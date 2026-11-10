@@ -1,0 +1,14 @@
+﻿const router = require('express').Router();
+const auth = require('../../middlewares/auth');
+const optionalAuth = require('../../middlewares/optionalAuth');
+const asyncHandler = require('../../middlewares/asyncHandler');
+const controller = require('./collectionController');
+const { createCollectionValidator } = require('./collectionValidator');
+router.get('/my-collections', auth, asyncHandler(controller.mine));
+router.post('/collections', auth, createCollectionValidator, asyncHandler(controller.create));
+router.get('/collections/:id', optionalAuth, asyncHandler(controller.details));
+router.delete('/collections/:id', auth, asyncHandler(controller.removeCollection));
+router.post('/collections/:id/destinations', auth, asyncHandler(controller.add));
+router.delete('/collections/:id/destinations/:destinationId', auth, asyncHandler(controller.removeItem));
+router.get('/destinations/:destinationId/collections-status', auth, asyncHandler(controller.status));
+module.exports = router;

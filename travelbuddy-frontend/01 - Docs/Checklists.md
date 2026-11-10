@@ -614,3 +614,57 @@ Itens de streaming (rota /stream, Range, 206) não se aplicam: projeto Grupo B, 
 - [x] `atividade12/respostas.md` e `atividade12/checkpoint.md` preenchidos.
 - [x] Build de produção frontend concluído.
 - [x] ZIPs da Atividade 12 criados sem `node_modules`, `dist`, `.env` ou dados temporários.
+
+
+# Atividade 13 - Colecoes, salvar e busca com debounce
+
+## Ficha e alcancabilidade
+
+| Recurso | Caminho de clique implementado |
+| --- | --- |
+| Minhas Colecoes | Menu do avatar e item Minhas Colecoes na Sidebar, em /colecoes. |
+| Criar e excluir | Botoes na tela; criacao em modal e exclusao com confirmacao. |
+| Detalhe da colecao | Clique no cartao; a rota e publica e aplica a permissao privada no backend. |
+| Salvar destino | Detalhe do destino > Salvar; visitante e encaminhado ao login com retorno para o detalhe. |
+| Remover destino | Botao em cada cartao no detalhe, exibido somente para a dona. |
+| Busca | Sidebar Explorar ou busca da Navbar com Enter; URL guarda ?q=. |
+
+Colecoes publicas de outras pessoas continuam acessiveis por link direto; nao ha listagem global de colecoes publicas nesta atividade.
+
+## Parte A - Backend
+
+- [x] Constantes de validacao e SEARCH adicionadas.
+- [x] utils/parseId.js criado e usado nas quatro rotas de follow e nos IDs do modulo de colecoes.
+- [x] Model Collection e model CollectionDestination criados; par unico e indice de destino reverso.
+- [x] Associacoes User, Collection, Destination e tabela de juncao registradas.
+- [x] Validator, service, controller e rotas de colecao registrados antes do 404.
+- [x] Criacao aplica trim, limite e privada por padrao; leitura respeita isPublic e devolve isOwner.
+- [x] Adicao idempotente e remocao 404 quando ausente; linhas e contadores atualizados em transacoes.
+- [x] Status lista hasDestination para as colecoes da conta.
+- [x] Busca consulta destinos e usuarios em paralelo, limita campos publicos e escapa curingas.
+- [x] Exclusao de destino limpa a juncao e decrementa cada colecao afetada na transacao.
+- [x] SHOW CREATE TABLE confirmou ON DELETE CASCADE nas duas FKs da juncao; indice unico recusou duplicata.
+- [x] Capturas HTTP de validacao, CRUD, permissoes, idempotencia, status e busca salvas como curl-01.jpg a curl-20.jpg.
+- [x] Controle do contador executado com registros temporarios: contador obsoleto 1 no controle e 0 com a correcao.
+
+## Parte B - Frontend
+
+- [x] Service de colecoes com as sete operacoes e limites alinhados com o backend.
+- [x] runOptimistic criado; LikeButton e FollowButton refatorados sem alterar a regra visual e com rollback.
+- [x] Modal de criacao valida titulo e descricao localmente e mostra erro no proprio formulario.
+- [x] Lista com modal de criacao, exclusao confirmada, estados vazio/erro e selo Publica/Privada.
+- [x] Detalhe publico da colecao, erro privado/nao encontrado, remocao pessimista e vazio.
+- [x] Modal Salvar carrega status, cadeados, caixas unidirecionais, atualizacao otimista e trava por linha.
+- [x] Botao Salvar acessivel no detalhe; visitante volta ao destino apos login.
+- [x] useDebouncedValue aguarda 400 ms; SearchView sincroniza termo com URL e mostra pessoas/destinos.
+- [x] Navbar permite busca para visitante e inclui Minhas Colecoes no menu do avatar; Sidebar inclui Explorar e Minhas Colecoes.
+- [x] Busca de uma palavra inteira gerou uma chamada; query curta nao consulta a API.
+- [x] Chrome headless conferiu erro inline, modal Salvar, estados privado/publico, rollback Offline, curtida e seguir otimistas.
+- [x] Criacao e exclusao pela tela; exclusao Offline manteve confirmacao aberta e exibiu toast.
+- [x] Evidencias de interface salvas: colecao-privada.jpg, salvar-modal.jpg, otimista-modal.jpg, rollback-modal.jpg, detalhe-colecao.jpg, colecao-privada-visitante.jpg, colecao-publica-visitante.jpg, debounce.jpg, busca.jpg e navbar-busca.jpg.
+
+## Entrega
+
+- [x] Respostas das oito perguntas salvas em atividade13/respostas.md.
+- [x] Evidencias MySQL e contador: colecoes-banco.jpg, contador-controle.jpg e contador-certo.jpg.
+- [x] ZIPs backend/frontend gerados sem node_modules, dist, .env ou arquivos de teste temporarios.

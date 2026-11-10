@@ -1,0 +1,10 @@
+﻿const service = require('./collectionService');
+const { success } = require('../../middlewares/apiResponse');
+const { parseId } = require('../../utils/parseId');
+exports.mine = async (req,res) => success(res, await service.getMine(req.user.id));
+exports.create = async (req,res) => success(res, await service.create(req.user.id, req.body), 'Coleção criada.', 201);
+exports.details = async (req,res) => { const { collection, items, isOwner } = await service.getById(parseId(req.params.id, 'coleção'), req.user?.id ?? null); return success(res, { ...collection.toJSON(), destinations: items, isOwner }); };
+exports.removeCollection = async (req,res) => { await service.destroy(parseId(req.params.id, 'coleção'), req.user.id); return success(res, null, 'Coleção excluída.'); };
+exports.add = async (req,res) => { const result = await service.add(parseId(req.params.id, 'coleção'), req.user.id, parseId(req.body.destinationId, 'destino')); return success(res, result, result.added ? 'Destino salvo na coleção.' : 'Este destino já estava na coleção.', result.added ? 201 : 200); };
+exports.removeItem = async (req,res) => success(res, await service.remove(parseId(req.params.id, 'coleção'), req.user.id, parseId(req.params.destinationId, 'destino')));
+exports.status = async (req,res) => success(res, await service.getStatus(req.user.id, parseId(req.params.destinationId, 'destino')));

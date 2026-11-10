@@ -3,6 +3,8 @@ const User = require('../user/userModel');
 const Like = require('../like/likeModel');
 const Comment = require('../comment/commentModel');
 const Follow = require('../follow/followModel');
+const Collection = require('../collection/collectionModel');
+const CollectionDestination = require('../collection/collectionDestinationModel');
 const { Op } = require('sequelize');
 const fs = require('fs/promises');
 const path = require('path');
@@ -124,6 +126,10 @@ async function deleteDestination(id, userId) {
   await sequelize.transaction(async (transaction) => {
     await Like.destroy({ where: { destinationId: destination.id }, transaction });
     await Comment.destroy({ where: { destinationId: destination.id }, transaction });
+    const memberships = await CollectionDestination.findAll({ where: { destinationId: destination.id }, attributes: ['collectionId'], transaction });
+    const collectionIds = [...new Set(memberships.map(row => Number(row.collectionId)))];
+    for (const collectionId of collectionIds) await Collection.decrement('destinationsCount', { by: 1, where: { id: collectionId, destinationsCount: { [require('sequelize').Op.gt]: 0 } }, transaction });
+    await CollectionDestination.destroy({ where: { destinationId: destination.id }, transaction });
     await destination.destroy({ transaction });
     await User.decrement('destinationsCount', { by: 1, where: { id: userId, destinationsCount: { [require('sequelize').Op.gt]: 0 } }, transaction });
   });

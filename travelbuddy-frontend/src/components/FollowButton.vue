@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { toggleFollow } from '../services/followService'
 import { useAuthenticatedAction } from '../composables/useAuthenticatedAction'
+import { runOptimistic } from '../utils/optimistic'
 
 const props = defineProps({ userId: { type: Number, required: true } })
 const following = defineModel('following', { type: Boolean, required: true })
@@ -22,17 +23,11 @@ async function toggle() {
   const previousFollowing = following.value
   const previousCount = followersCount.value
   const nowFollowing = !previousFollowing
-  following.value = nowFollowing
-  followersCount.value = Math.max(0, previousCount + (nowFollowing ? 1 : -1))
-  try {
-    const response = await run(() => toggleFollow(props.userId), { successMessage: nowFollowing ? 'Você começou a seguir esta pessoa.' : 'Você deixou de seguir esta pessoa.' })
-    if (!response) throw new Error('A ação não foi concluída.')
-    following.value = response.data.isFollowing
-    followersCount.value = response.data.followersCount
-  } catch (error) {
-    following.value = previousFollowing
-    followersCount.value = previousCount
-  }
+  await run(() => runOptimistic({
+    apply() { following.value = nowFollowing; followersCount.value = Math.max(0, previousCount + (nowFollowing ? 1 : -1)); return () => { following.value = previousFollowing; followersCount.value = previousCount } },
+    request: () => toggleFollow(props.userId),
+    confirm(data) { following.value = data.isFollowing; followersCount.value = data.followersCount }
+  }), { successMessage: nowFollowing ? 'Você começou a seguir esta pessoa.' : 'Você deixou de seguir esta pessoa.' })
 }
 </script>
 

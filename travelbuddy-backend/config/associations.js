@@ -3,9 +3,18 @@ const Destination = require('../modules/destination/destinationModel');
 const Like = require('../modules/like/likeModel');
 const Comment = require('../modules/comment/commentModel');
 const Follow = require('../modules/follow/followModel');
+const Collection = require('../modules/collection/collectionModel');
+const CollectionDestination = require('../modules/collection/collectionDestinationModel');
 
 Follow.belongsTo(User, { as: 'Follower', foreignKey: 'followerId' });
 Follow.belongsTo(User, { as: 'Following', foreignKey: 'followingId' });
+
+User.hasMany(Collection, { foreignKey: 'userId' });
+Collection.belongsTo(User, { foreignKey: 'userId' });
+Collection.hasMany(CollectionDestination, { foreignKey: 'collectionId' });
+CollectionDestination.belongsTo(Collection, { foreignKey: 'collectionId' });
+Destination.hasMany(CollectionDestination, { foreignKey: 'destinationId' });
+CollectionDestination.belongsTo(Destination, { foreignKey: 'destinationId' });
 
 User.hasMany(Destination, { foreignKey: 'userId' });
 Destination.belongsTo(User, { foreignKey: 'userId' });
