@@ -5,6 +5,8 @@ const Comment = require('../comment/commentModel');
 const Follow = require('../follow/followModel');
 const Collection = require('../collection/collectionModel');
 const CollectionDestination = require('../collection/collectionDestinationModel');
+const Notification = require('../notification/notificationModel');
+const Report = require('../report/reportModel');
 const { Op } = require('sequelize');
 const fs = require('fs/promises');
 const path = require('path');
@@ -130,6 +132,8 @@ async function deleteDestination(id, userId) {
     const collectionIds = [...new Set(memberships.map(row => Number(row.collectionId)))];
     for (const collectionId of collectionIds) await Collection.decrement('destinationsCount', { by: 1, where: { id: collectionId, destinationsCount: { [require('sequelize').Op.gt]: 0 } }, transaction });
     await CollectionDestination.destroy({ where: { destinationId: destination.id }, transaction });
+    await Report.destroy({ where: { destinationId: destination.id }, transaction });
+    await Notification.destroy({ where: { destinationId: destination.id }, transaction });
     await destination.destroy({ transaction });
     await User.decrement('destinationsCount', { by: 1, where: { id: userId, destinationsCount: { [require('sequelize').Op.gt]: 0 } }, transaction });
   });

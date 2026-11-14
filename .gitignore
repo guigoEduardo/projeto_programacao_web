@@ -1,2 +1,4 @@
-comandoszip.txt
-*.zip
+travelbuddy-frontend\node_modules
+travelbuddy-backend\node_modules
+travelbuddy-frontend\.env
+travelbuddy-backend\.env

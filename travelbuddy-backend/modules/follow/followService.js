@@ -2,6 +2,8 @@ const { Op } = require('sequelize');
 const sequelize = require('../../config/database');
 const User = require('../user/userModel');
 const Follow = require('./followModel');
+const { createNotification, removeNotification } = require('../notification/notificationService');
+const { NOTIFICATION } = require('../../config/constants');
 
 function httpError(status, message) {
   return Object.assign(new Error(message), { status });
@@ -16,6 +18,7 @@ async function requireUser(id, options = {}) {
 async function toggleFollow(followerId, followingId) {
   if (followerId === followingId) throw httpError(400, 'Você não pode seguir a si mesmo.');
   const target = await requireUser(followingId);
+  // Quatro escritas atômicas: relação, notificação e os dois contadores.
   const isFollowing = await sequelize.transaction(async (transaction) => {
     // Lock both users in the same order, including when two users follow each other.
     await User.findAll({
@@ -24,6 +27,8 @@ async function toggleFollow(followerId, followingId) {
     });
     const [follow, created] = await Follow.findOrCreate({ where: { followerId, followingId }, transaction });
     if (!created) await follow.destroy({ transaction });
+    if (created) await createNotification({ userId: followingId, actorId: followerId, type: NOTIFICATION.TYPES.FOLLOW }, transaction);
+    else await removeNotification({ userId: followingId, actorId: followerId, type: NOTIFICATION.TYPES.FOLLOW }, transaction);
     const delta = created ? 1 : -1;
     await User.increment('followersCount', { by: delta, where: { id: followingId }, transaction });
     await User.increment('followingCount', { by: delta, where: { id: followerId }, transaction });

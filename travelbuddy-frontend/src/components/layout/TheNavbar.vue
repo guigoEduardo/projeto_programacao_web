@@ -1,11 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../../composables/useAuth'
 import { useClickOutside } from '../../composables/useClickOutside'
 import { getProfilePictureUrl } from '../../utils/media'
+import { useNotificationsStore } from '../../stores/notifications'
 
 const { isAuthenticated, user, logout } = useAuth()
+const notifications = useNotificationsStore()
+const unreadCount = computed(() => notifications.unreadCount)
+const unreadLabel = computed(() => unreadCount.value > 99 ? '99+' : String(unreadCount.value))
+watch(isAuthenticated, authenticated => authenticated ? notifications.startPolling() : notifications.stopPolling(), { immediate: true })
+onUnmounted(() => notifications.stopPolling())
 const router = useRouter()
 const menuRoot = ref(null)
 const menuOpen = ref(false)
@@ -29,6 +35,7 @@ async function handleLogout() {
         <RouterLink class="nav-link" to="/busca">Busca</RouterLink>
         <RouterLink v-if="isAuthenticated" class="nav-link" to="/relatos/novo">Novo destino</RouterLink>
       </div>
+      <RouterLink v-if="isAuthenticated" class="btn btn-outline-light btn-sm position-relative me-2" :to="{ name: 'notifications' }" :aria-label="`Notificações (${unreadCount} não lidas)`"><i class="bi bi-bell" /><span v-if="unreadCount > 0" class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">{{ unreadLabel }}</span></RouterLink>
       <div v-if="!isAuthenticated" class="navbar-nav nav-account">
         <RouterLink class="nav-link" to="/login">Entrar</RouterLink>
         <RouterLink class="btn btn-light btn-sm rounded-pill px-3" to="/register">Criar conta</RouterLink>

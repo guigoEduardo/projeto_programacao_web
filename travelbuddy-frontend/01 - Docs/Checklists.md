@@ -668,3 +668,9 @@ Colecoes publicas de outras pessoas continuam acessiveis por link direto; nao ha
 - [x] Respostas das oito perguntas salvas em atividade13/respostas.md.
 - [x] Evidencias MySQL e contador: colecoes-banco.jpg, contador-controle.jpg e contador-certo.jpg.
 - [x] ZIPs backend/frontend gerados sem node_modules, dist, .env ou arquivos de teste temporarios.
+
+---
+
+# Atividade 14 — Notificações e denúncias
+
+Checklist detalhado, caminhos de clique, itens concluídos e verificações/evidências pendentes: [`atividade14/checklists.md`](atividade14/checklists.md). As dez respostas conceituais estão em [`atividade14/respostas.md`](atividade14/respostas.md).

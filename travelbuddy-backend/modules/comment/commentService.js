@@ -2,6 +2,8 @@ const sequelize = require('../../config/database');
 const Comment = require('./commentModel');
 const Destination = require('../destination/destinationModel');
 const User = require('../user/userModel');
+const { createNotification } = require('../notification/notificationService');
+const { NOTIFICATION } = require('../../config/constants');
 
 function httpError(status, message) { const error = new Error(message); error.status = status; return error; }
 
@@ -16,6 +18,7 @@ async function createComment(userId, destinationId, content) {
   const comment = await sequelize.transaction(async (transaction) => {
     const created = await Comment.create({ userId, destinationId, content }, { transaction });
     await Destination.increment('commentsCount', { by: 1, where: { id: destinationId }, transaction });
+    await createNotification({ userId: destination.userId, actorId: userId, type: NOTIFICATION.TYPES.COMMENT, destinationId }, transaction);
     return created;
   });
   return Comment.findByPk(comment.id, { include: [{ model: User, attributes: ['id', 'username', 'fullName', 'profilePicture'] }] });

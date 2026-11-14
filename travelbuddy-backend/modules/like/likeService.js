@@ -3,21 +3,26 @@ const sequelize = require('../../config/database');
 const Like = require('./likeModel');
 const Destination = require('../destination/destinationModel');
 const User = require('../user/userModel');
+const { createNotification, removeNotification } = require('../notification/notificationService');
+const { NOTIFICATION } = require('../../config/constants');
 
 function httpError(status, message) { const error = new Error(message); error.status = status; return error; }
 
 async function toggleLike(userId, destinationId) {
   const destination = await Destination.findByPk(destinationId);
   if (!destination) throw httpError(404, 'Destino não encontrado.');
+  // Três escritas atômicas: curtida, contador e notificação.
   const result = await sequelize.transaction(async (transaction) => {
     const existing = await Like.findOne({ where: { userId, destinationId }, transaction, lock: transaction.LOCK.UPDATE });
     if (existing) {
       await existing.destroy({ transaction });
       await Destination.decrement('likesCount', { by: 1, where: { id: destinationId, likesCount: { [Op.gt]: 0 } }, transaction });
+      await removeNotification({ userId: destination.userId, actorId: userId, type: NOTIFICATION.TYPES.LIKE, destinationId }, transaction);
       return false;
     }
     await Like.create({ userId, destinationId }, { transaction });
     await Destination.increment('likesCount', { by: 1, where: { id: destinationId }, transaction });
+    await createNotification({ userId: destination.userId, actorId: userId, type: NOTIFICATION.TYPES.LIKE, destinationId }, transaction);
     return true;
   });
   const updated = await Destination.findByPk(destinationId);

@@ -8,11 +8,17 @@ import CommentSection from '../components/CommentSection.vue'
 import AddToCollectionModal from '../components/collection/AddToCollectionModal.vue'
 import { useAuth } from '../composables/useAuth'
 import { useAsyncData } from '../composables/useAsyncData'
+import ReportDestinationModal from '../components/report/ReportDestinationModal.vue'
+import { useAuthenticatedAction } from '../composables/useAuthenticatedAction'
+import { useToast } from '../composables/useToast'
 
 const route = useRoute()
 const router = useRouter()
 const { isAuthenticated } = useAuth()
 const showCollections = ref(false)
+const showReport = ref(false)
+const { run: runAuthenticatedAction } = useAuthenticatedAction()
+const toast = useToast()
 
 const destination = ref(null)
 const isOwner = ref(false)
@@ -35,6 +41,8 @@ const createdAtLabel = computed(() =>
 )
 
 function saveDestination() { if (!isAuthenticated.value) { router.push({ name: 'login', query: { redirect: route.fullPath } }); return } showCollections.value = true }
+function openReport() { return runAuthenticatedAction(() => { showReport.value = true }, { login: () => router.push({ name: 'login', query: { redirect: route.fullPath } }) }) }
+function handleReported() { showReport.value = false; toast.success('Denúncia enviada para revisão.') }
 
 async function editDestination() {
   await router.push({ name: 'relato-edit', params: { id: destination.value.id } })
@@ -85,8 +93,9 @@ watch(() => route.params.id, async id => {
             · {{ destination.viewsCount }} visualizações
           </span>
         </div>
-        <div class="detail-actions mt-3 d-flex gap-2 align-items-center"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" /><button type="button" class="btn btn-outline-success" @click="saveDestination"><i class="bi bi-bookmark-plus me-1"/>Salvar</button></div>
+        <div class="detail-actions mt-3 d-flex gap-2 align-items-center"><LikeButton :destination-id="destination.id" v-model="isLiked" v-model:count="destination.likesCount" /><button type="button" class="btn btn-outline-success" @click="saveDestination"><i class="bi bi-bookmark-plus me-1"/>Salvar</button><button v-if="!isOwner" type="button" class="btn btn-outline-danger" @click="openReport"><i class="bi bi-flag me-1"/>Denunciar</button></div>
         <AddToCollectionModal v-if="showCollections" :open="showCollections" :destination-id="destination.id" @close="showCollections=false" />
+        <ReportDestinationModal v-if="showReport" v-model="showReport" :destination-id="destination.id" @reported="handleReported" />
         <CommentSection :destination-id="destination.id" v-model:count="destination.commentsCount" />
       </div>
     </div>

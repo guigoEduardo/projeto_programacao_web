@@ -9,6 +9,8 @@ var likeRoutes = require('./modules/like/likeRoutes');
 var commentRoutes = require('./modules/comment/commentRoutes');
 var followRoutes = require('./modules/follow/followRoutes');
 var collectionRoutes = require('./modules/collection/collectionRoutes');
+var notificationRoutes = require('./modules/notification/notificationRoutes');
+var reportRoutes = require('./modules/report/reportRoutes');
 var errorHandler = require('./middlewares/errorHandler');
 require('./config/associations');
 require('dotenv').config();
@@ -18,12 +20,9 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 app.use(logger('dev'));
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  credentials: true
-}));
 
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
@@ -35,6 +34,8 @@ app.use('/api', likeRoutes);
 app.use('/api', commentRoutes);
 app.use('/api', followRoutes);
 app.use('/api', collectionRoutes);
+app.use('/api', notificationRoutes);
+app.use('/api', reportRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

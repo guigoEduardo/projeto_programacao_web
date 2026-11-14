@@ -9,7 +9,7 @@ export function login(payload) {
 }
 
 export function logout() {
-  return api.post('/logout')
+  return api.post('/logout', undefined, { silent: true })
 }
 
 export function getMyProfile() {
