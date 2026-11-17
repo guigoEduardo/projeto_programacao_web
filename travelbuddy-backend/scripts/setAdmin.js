@@ -1,0 +1,3 @@
+﻿require('dotenv').config();
+const sequelize=require('../config/database');const User=require('../modules/user/userModel');
+(async()=>{try{const username=process.argv[2];if(!username)throw new Error('Uso: node scripts/setAdmin.js <username> [off]');const user=await User.findOne({where:{username}});if(!user){console.error(`Usuário "${username}" não encontrado.`);process.exitCode=1;return;}user.isAdmin=process.argv[3]!=='off';await user.save();console.log(`${username}: ${user.isAdmin?'administrador':'usuário comum'}.`);}catch(error){console.error(error.message);process.exitCode=1;}finally{await sequelize.close();}})();

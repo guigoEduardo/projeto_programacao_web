@@ -29,6 +29,7 @@ Notification.belongsTo(User, { as: 'Actor', foreignKey: 'actorId' });
 Notification.belongsTo(Destination, { foreignKey: 'destinationId' });
 Report.belongsTo(User, { as: 'Reporter', foreignKey: 'userId' });
 Report.belongsTo(Destination, { foreignKey: 'destinationId' });
+Destination.hasMany(Report, { foreignKey: 'destinationId' });
 User.hasMany(Comment, { foreignKey: 'userId' });
 Comment.belongsTo(User, { foreignKey: 'userId' });
 Destination.hasMany(Comment, { foreignKey: 'destinationId' });

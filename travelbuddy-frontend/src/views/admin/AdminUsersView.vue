@@ -1,6 +1,9 @@
-<template>
-  <div class="p-4">
-    <h1>AdminUsersView</h1>
-    <p>Em construção.</p>
-  </div>
-</template>
+﻿<script setup>
+import {ref,onMounted} from 'vue';import {usePaginatedList} from '../../composables/usePaginatedList';import {useDebouncedValue} from '../../composables/useDebouncedValue';import {getAdminUsers,setAdminUserBlocked} from '../../services/adminService';import {useToast} from '../../composables/useToast';import {useAuth} from '../../composables/useAuth';import ConfirmModal from '../../components/base/ConfirmModal.vue'
+const typedText=ref(''),term=useDebouncedValue(typedText,400),userToBlock=ref(null),busyIds=ref(new Set()),toast=useToast(),{user:currentUser}=useAuth();const{items:users,loading,errorMessage,loadMore,hasMore}=usePaginatedList((page,limit)=>getAdminUsers({search:term.value.trim(),page,limit}),{watch:term});onMounted(loadMore);
+async function changeBlocked(user,isBlocked){if(busyIds.value.has(user.id))return;busyIds.value=new Set(busyIds.value).add(user.id);try{const r=await setAdminUserBlocked(user.id,isBlocked);user.isBlocked=r.data.isBlocked;toast.success(r.message||'Status atualizado.');userToBlock.value=null}catch(_){/* O interceptor exibe o erro. */}finally{const next=new Set(busyIds.value);next.delete(user.id);busyIds.value=next}}
+</script>
+<template><div><h2>Usuários</h2><input v-model="typedText" class="form-control mb-3" placeholder="Buscar por nome, usuário ou e-mail" aria-label="Buscar usuários"><p v-if="loading">Carregando…</p><p v-else-if="errorMessage" class="text-danger">{{errorMessage}}</p><p v-else-if="!users.length">Nenhum usuário encontrado.</p><article v-for="user in users" :key="user.id" class="card p-3 mb-2 d-flex flex-row justify-content-between align-items-center"><div><strong>{{user.fullName||user.username}}</strong> @{{user.username}} · {{user.email}} <span v-if="user.isAdmin" class="badge text-bg-primary">Admin</span> <span v-if="user.isBlocked" class="badge text-bg-danger">Bloqueado</span></div><div v-if="user.id===currentUser?.id">Você</div><div v-else-if="user.isAdmin" class="text-muted">Administrador</div><div v-else><button v-if="user.isBlocked" class="btn btn-outline-success" :disabled="busyIds.has(user.id)" @click="changeBlocked(user,false)">Desbloquear</button><button v-else class="btn btn-outline-danger" @click="userToBlock=user">Bloquear</button></div></article><button v-if="hasMore" class="btn btn-outline-secondary" :disabled="loading" @click="loadMore">Carregar mais</button><ConfirmModal :model-value="!!userToBlock" title="Bloquear usuário" confirm-label="Bloquear" :busy="!!userToBlock&&busyIds.has(userToBlock.id)" @update:model-value="v=>{if(!v)userToBlock=null}" @confirm="userToBlock&&changeBlocked(userToBlock,true)">Bloquear {{userToBlock?.fullName||userToBlock?.username}}? A pessoa perderá acesso à conta.</ConfirmModal></div></template>
+
+
+

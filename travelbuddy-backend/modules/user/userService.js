@@ -52,13 +52,23 @@ async function loginUser(email, password) {
   const user = await User.findOne({ where: { email } });
 
   if (!user) {
-    throw new Error('Credenciais inválidas.');
+    const error = new Error('Credenciais inválidas.');
+    error.status = 401;
+    throw error;
   }
 
   const passwordMatches = await bcrypt.compare(password, user.password);
 
   if (!passwordMatches) {
-    throw new Error('Credenciais inválidas.');
+    const error = new Error('Credenciais inválidas.');
+    error.status = 401;
+    throw error;
+  }
+
+  if (user.isBlocked) {
+    const error = new Error('Sua conta foi bloqueada. Entre em contato com a administração.');
+    error.status = 403;
+    throw error;
   }
 
   const token = generateToken({ id: user.id, username: user.username });

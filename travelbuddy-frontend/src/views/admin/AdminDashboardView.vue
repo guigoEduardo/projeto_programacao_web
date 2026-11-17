@@ -1,6 +1,7 @@
-<template>
-  <div class="p-4">
-    <h1>AdminDashboard</h1>
-    <p>Em construção.</p>
-  </div>
-</template>
+﻿<script setup>
+import {useAsyncData} from '../../composables/useAsyncData';import {useToast} from '../../composables/useToast';import {getAdminDashboard} from '../../services/adminService'
+const{data,loading,errorMessage,execute}=useAsyncData(async()=>{const r=await getAdminDashboard();return r.data});const toast=useToast()
+const cards=[{key:'users',label:'Usuários',icon:'👥'},{key:'blockedUsers',label:'Usuários bloqueados',icon:'🔒'},{key:'destinations',label:'Destinos',icon:'🧭'},{key:'comments',label:'Comentários',icon:'💬'},{key:'likes',label:'Curtidas',icon:'❤️'},{key:'reviewedReports',label:'Denúncias revisadas',icon:'✅'}]
+async function refresh(){try{await execute();toast.success('Painel atualizado.')}catch(_){}}
+</script>
+<template><div><div class="d-flex justify-content-between align-items-center"><h2>Visão geral</h2><button class="btn btn-outline-primary" :disabled="loading" @click="refresh">{{loading?'Atualizando…':'Atualizar'}}</button></div><p v-if="loading">Carregando…</p><p v-else-if="errorMessage" class="text-danger">{{errorMessage}}</p><div v-else class="row g-3"><div v-for="card in cards" :key="card.key" class="col-sm-6 col-lg-4"><article class="card p-4 h-100"><div>{{card.icon}} {{card.label}}</div><strong class="display-5">{{data?.[card.key] ?? 0}}</strong></article></div><div class="col-sm-6 col-lg-4"><RouterLink :to="{name:'admin-reports'}" class="card p-4 h-100 text-danger text-decoration-none border-danger"><div>🚩 Denúncias pendentes</div><strong class="display-5">{{data?.pendingReports ?? 0}}</strong></RouterLink></div></div></div></template>

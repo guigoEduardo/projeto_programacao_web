@@ -1,3 +1,8 @@
+<script setup>
+import { useAuth } from '../../composables/useAuth'
+const { isAdmin } = useAuth()
+</script>
+
 <template>
   <aside class="sidebar">
     <router-link to="/perfil">Meu Perfil</router-link>
@@ -5,6 +10,7 @@
     <router-link to="/feed/seguindo">Seguindo</router-link>
     <router-link to="/busca">Explorar</router-link>
     <router-link to="/colecoes">Minhas Cole&#231;&#245;es</router-link>
+    <router-link v-if="isAdmin" to="/admin">Administração</router-link>
   </aside>
 </template>
 

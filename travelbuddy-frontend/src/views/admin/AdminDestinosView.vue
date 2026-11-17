@@ -1,6 +1,11 @@
-<template>
-  <div class="p-4">
-    <h1>AdminDestinos</h1>
-    <p>Em construção.</p>
-  </div>
-</template>
+﻿<script setup>
+import {ref,onMounted} from 'vue';import {usePaginatedList} from '../../composables/usePaginatedList';import {useDebouncedValue} from '../../composables/useDebouncedValue';import {getAdminDestinations,deleteAdminDestination} from '../../services/adminService';import {useToast} from '../../composables/useToast';import ConfirmModal from '../../components/base/ConfirmModal.vue';import {getDestinationImageUrl} from '../../utils/media'
+const typedText=ref(''),term=useDebouncedValue(typedText,400),destinationToDelete=ref(null),isDeleting=ref(false),toast=useToast();const{items:destinations,loading,errorMessage,loadMore,hasMore}=usePaginatedList((page,limit)=>getAdminDestinations({search:term.value.trim(),page,limit}),{watch:term});onMounted(loadMore);
+async function confirmDelete(){if(!destinationToDelete.value||isDeleting.value)return;isDeleting.value=true;try{const r=await deleteAdminDestination(destinationToDelete.value.id);destinations.value=destinations.value.filter(d=>d.id!==destinationToDelete.value.id);toast.success(r.message||'Destino excluído.');destinationToDelete.value=null}catch(_){/* O interceptor exibe o erro. */}finally{isDeleting.value=false}}
+</script>
+<template><div><h2>Destinos</h2><input v-model="typedText" class="form-control mb-3" placeholder="Buscar destinos" aria-label="Buscar destinos"><p v-if="loading">Carregando…</p><p v-else-if="errorMessage" class="text-danger">{{errorMessage}}</p><p v-else-if="!destinations.length">Nenhum destino encontrado.</p><article v-for="destination in destinations" :key="destination.id" class="card p-3 mb-2 d-flex flex-row justify-content-between align-items-center"><div class="d-flex gap-3 align-items-center"><img v-if="destination.image" :src="getDestinationImageUrl(destination.image)" alt="" width="72" height="60" style="object-fit:cover"><div><RouterLink :to="{name:'relato-detail',params:{id:destination.id}}">{{destination.title}}</RouterLink><div>Por {{destination.User?.username||'—'}}</div><span v-if="destination.pendingReportsCount>0" class="badge text-bg-warning">{{destination.pendingReportsCount}} denúncia{{destination.pendingReportsCount===1?'':'s'}} pendente{{destination.pendingReportsCount===1?'':'s'}}</span></div></div><button class="btn btn-outline-danger" @click="destinationToDelete=destination">Excluir</button></article><button v-if="hasMore" class="btn btn-outline-secondary" :disabled="loading" @click="loadMore">Carregar mais</button><ConfirmModal :model-value="!!destinationToDelete" title="Excluir destino" confirm-label="Excluir destino" :busy="isDeleting" @update:model-value="v=>{if(!v)destinationToDelete=null}" @confirm="confirmDelete">O destino “{{destinationToDelete?.title}}” e seus comentários, curtidas, denúncias, notificações e vínculos com roteiros serão apagados. Esta ação não pode ser desfeita.</ConfirmModal></div></template>
+
+
+
+
+

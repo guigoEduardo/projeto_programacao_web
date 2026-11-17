@@ -122,8 +122,9 @@ async function updateDestination(id, userId, { title, description, category }, f
   return destination;
 }
 
-async function deleteDestination(id, userId) {
-  const destination = await findOwnedDestination(id, userId);
+async function deleteDestination(id, userId, isAdmin = false) {
+  const destination = isAdmin ? await Destination.findByPk(id) : await findOwnedDestination(id, userId);
+  if (!destination) throw httpError(404, 'Destino não encontrado.');
   const sequelize = require('../../config/database');
   await sequelize.transaction(async (transaction) => {
     await Like.destroy({ where: { destinationId: destination.id }, transaction });

@@ -1,6 +1,9 @@
-<template>
-  <div class="p-4">
-    <h1>AdminReportsView</h1>
-    <p>Em construção.</p>
-  </div>
-</template>
+﻿<script setup>
+import { ref, onMounted } from 'vue';import {usePaginatedList} from '../../composables/usePaginatedList';import {getAdminReports,reviewAdminReport} from '../../services/adminService';import {useToast} from '../../composables/useToast';import {REPORT_REASONS} from '../../config/constants';import {getDestinationImageUrl} from '../../utils/media'
+const statusFilter=ref('pending'),busyIds=ref(new Set()),toast=useToast();const reasonLabels=Object.fromEntries(REPORT_REASONS.map(x=>[x.value,x.label]));const {items:reports,loading,errorMessage,loadMore,reload,hasMore}=usePaginatedList((page,limit)=>getAdminReports({status:statusFilter.value,page,limit}),{limit:12,watch:statusFilter});onMounted(loadMore);
+async function markAsReviewed(report){if(busyIds.value.has(report.id))return;busyIds.value=new Set(busyIds.value).add(report.id);try{const r=await reviewAdminReport(report.id);report.status=r.data.status;report.reviewedAt=r.data.reviewedAt;toast.success(r.message||'Denúncia revisada.')}catch(_){/* O interceptor exibe o erro. */}finally{const next=new Set(busyIds.value);next.delete(report.id);busyIds.value=next}}
+</script>
+<template><div><div class="d-flex justify-content-between"><h2>Denúncias</h2><button class="btn btn-outline-primary" @click="reload">Atualizar</button></div><div class="btn-group mb-3" role="group"><button v-for="f in ['pending','reviewed','all']" :key="f" class="btn" :class="statusFilter===f?'btn-primary':'btn-outline-primary'" :aria-pressed="statusFilter===f" @click="statusFilter=f">{{{pending:'Pendentes',reviewed:'Revisadas',all:'Todas'}[f]}}</button></div><p v-if="loading">Carregando…</p><p v-else-if="errorMessage" class="text-danger">{{errorMessage}}</p><p v-else-if="!reports.length">Nenhuma denúncia encontrada.</p><article v-for="report in reports" :key="report.id" class="card p-3 mb-2"><div class="d-flex gap-3"><img v-if="report.Destination?.image" :src="getDestinationImageUrl(report.Destination.image)" alt="" width="90" height="70" style="object-fit:cover"><div class="flex-grow-1"><RouterLink :to="{name:'relato-detail',params:{id:report.destinationId}}">{{report.Destination?.title||'Destino removido'}}</RouterLink><div>Autor: {{report.Destination?.User?.username||'—'}} · Denunciado por {{report.Reporter?.username}} em {{new Date(report.createdAt).toLocaleString('pt-BR')}}</div><div>Motivo: {{reasonLabels[report.reason]||report.reason}} · <span class="badge" :class="report.status==='pending'?'text-bg-warning':'text-bg-success'">{{report.status==='pending'?'Pendente':'Revisada'}}</span></div><div v-if="report.reviewedAt">Revisada em {{new Date(report.reviewedAt).toLocaleString('pt-BR')}}</div><button v-if="report.status==='pending'" class="btn btn-sm btn-primary mt-2" :disabled="busyIds.has(report.id)" @click="markAsReviewed(report)">{{busyIds.has(report.id)?'Salvando…':'Marcar como revisada'}}</button></div></div></article><button v-if="hasMore" class="btn btn-outline-secondary" :disabled="loading" @click="loadMore">Carregar mais</button></div></template>
+
+
+
